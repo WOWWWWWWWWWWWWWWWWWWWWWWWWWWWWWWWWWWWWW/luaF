@@ -25,3 +25,5 @@ export class StreamedToken extends Token {
         this.leading_white = leading_white
     }
 }
+
+export type TokenTree = Token | TokenTree[]

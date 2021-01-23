@@ -48,17 +48,11 @@ const Symbols = new Set(['+', '-', '*', '/', '^', '%', ',', '{', '}', '[', ']', 
 const MatchEvenBackslashes = /(?<!\\)(?:\\\\)*(?!\\)/
 const MatchOddBackslashes = /(?<!\\)\\(?:\\\\)*(?!\\)/
 
-export default function lexer(input: string): Array<StreamedToken> {
+export default function lexer(input: string): StreamedToken[] {
     let p = 0
     let length = input.length
 
-    const tokenBuffer: Array<StreamedToken> = []
-
-    // Peek a character
-    const look = (n = 0): string => p <= length ? input.charAt(p + n) : ""
-
-    // Get a character
-    const get = (): string => p <= length ? input.charAt(p++) : ""
+    const tokenBuffer: StreamedToken[] = []
 
     // Error
     const panic = (msg: string) => {
@@ -164,7 +158,7 @@ export default function lexer(input: string): Array<StreamedToken> {
         } else if (m = match(/[~=><]=?/)) {
             p += m[0].length
             token(TokenType.Symbol)
-        } else if (Symbols.has(look())) {
+        } else if (Symbols.has(input.charAt(p))) {
             p++
             token(TokenType.Symbol)
         } else {
