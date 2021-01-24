@@ -34,12 +34,12 @@ const AmbiguousLast = new Set([')', ']'])
 const AmbiguousFirst = new Set(['(', '[', '\'', '"', '{'])
 
 function getLastToken(tree: TokenTree[]): Token {
-    let o = tree[tree.length - 1]
+    const o = tree[tree.length - 1]
     return Array.isArray(o) ? getLastToken(o) : o
 }
 
 function getFirstToken(tree: TokenTree[]): Token {
-    let o = tree[0]
+    const o = tree[0]
     return Array.isArray(o) ? getLastToken(o) : o
 }
 
@@ -56,11 +56,11 @@ export class Block extends Base {
 
         let prev: TokenTree[] | undefined;
         for (const cur of this.stats) {
-            let tree = cur.assemble()
+            const tree = cur.assemble()
             if (prev) {
-                let last_char = getLastToken(prev).source.slice(-1)
-                let first_char = getFirstToken(tree).source.slice(0)
-                if (AmbiguousLast.has(last_char) && AmbiguousFirst.has(first_char)) {
+                const lastChar = getLastToken(prev).source.slice(-1)
+                const firstChar = getFirstToken(tree).source.slice(0)
+                if (AmbiguousLast.has(lastChar) && AmbiguousFirst.has(firstChar)) {
                     res.push(new Token(TokenType.Symbol, ";"))
                 }
             }

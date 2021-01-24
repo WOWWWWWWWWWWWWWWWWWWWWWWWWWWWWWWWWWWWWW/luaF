@@ -1,7 +1,7 @@
 import { Expression } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class BooleanLiteral extends Expression {
+export class BooleanLiteral extends Expression {
     value: boolean
 
     constructor(value: boolean) {

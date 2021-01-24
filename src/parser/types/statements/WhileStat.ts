@@ -1,7 +1,7 @@
 import { Block, Expression, Statement } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class WhileStat extends Statement {
+export class WhileStat extends Statement {
     condition: Expression
     body: Block
 

@@ -1,9 +1,8 @@
 import { Statement } from "../Base.ts";
 import { TokenTree } from "../Token.ts";
-import { ArgCall, StringCall, TableCall } from './../expressions/CallExpr.ts';
+import { Call } from './../expressions/CallExpr.ts';
 
-type Call = ArgCall | StringCall | TableCall
-export default class CallExprStat extends Statement {
+export class CallExprStat extends Statement {
     expr: Call
 
     constructor(expr: Call) {

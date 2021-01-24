@@ -1,7 +1,7 @@
 import { Expression } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class ParenExpr extends Expression {
+export class ParenExpr extends Expression {
     value: Expression
 
     constructor(value: Expression) {

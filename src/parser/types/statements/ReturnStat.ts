@@ -1,7 +1,7 @@
 import { assembleWithCommas, Expression, Statement } from "../Base.ts";
 import { TokenTree, Token, TokenType } from "../Token.ts";
 
-export default class ReturnStat extends Statement {
+export class ReturnStat extends Statement {
     list: Expression[]
 
     constructor(list: Expression[]) {

@@ -26,7 +26,7 @@ export class ElseClause {
     }
 }
 
-export default class IfStat extends Statement {
+export class IfStat extends Statement {
     condition: Expression
     body: Block
     elseClauses: ElseClause[]

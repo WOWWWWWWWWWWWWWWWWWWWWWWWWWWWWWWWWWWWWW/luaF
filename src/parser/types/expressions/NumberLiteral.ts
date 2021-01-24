@@ -1,7 +1,7 @@
 import { Expression } from "../Base.ts";
 import { Token, TokenTree } from "../Token.ts";
 
-export default class NumberLiteral extends Expression {
+export class NumberLiteral extends Expression {
     value: Token
 
     constructor(value: Token) {

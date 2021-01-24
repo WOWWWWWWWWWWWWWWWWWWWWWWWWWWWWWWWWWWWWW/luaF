@@ -1,5 +1,5 @@
 out.lua
-dump.json
+dump*.json
 tests
 
 .vscode

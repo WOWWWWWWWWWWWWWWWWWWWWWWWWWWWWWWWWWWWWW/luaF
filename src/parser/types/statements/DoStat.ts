@@ -1,7 +1,7 @@
 import { Block, Statement } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class DoStat extends Statement {
+export class DoStat extends Statement {
     body: Block
 
     constructor(body: Block) {

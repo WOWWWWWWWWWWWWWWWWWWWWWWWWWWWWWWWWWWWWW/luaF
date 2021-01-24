@@ -1,7 +1,7 @@
 import { Block, Expression, Statement } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class RepeatStat extends Statement {
+export class RepeatStat extends Statement {
     body: Block
     condition: Expression
 

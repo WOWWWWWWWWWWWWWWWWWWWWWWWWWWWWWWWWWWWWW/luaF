@@ -1,7 +1,7 @@
 import { Expression } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class IndexExpr extends Expression {
+export class IndexExpr extends Expression {
     base: Expression
     index: Expression
 

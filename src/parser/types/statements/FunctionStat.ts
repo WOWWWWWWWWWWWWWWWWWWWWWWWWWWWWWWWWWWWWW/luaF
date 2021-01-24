@@ -1,7 +1,7 @@
 import { assembleTokensWithCommas, Block, Statement } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class FunctionStat extends Statement {
+export class FunctionStat extends Statement {
     local: boolean
     namechain: Token[]
     arglist: Token[]

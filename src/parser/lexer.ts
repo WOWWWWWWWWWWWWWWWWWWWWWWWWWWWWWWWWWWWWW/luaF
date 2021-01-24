@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-cond-assign
 import { StreamedToken, Token, TokenType } from './types/Token.ts';
 
 // Golfing because I don't like you :-)
@@ -48,16 +49,15 @@ const Symbols = new Set(['+', '-', '*', '/', '^', '%', ',', '{', '}', '[', ']', 
 const MatchEvenBackslashes = /(?<!\\)(?:\\\\)*(?!\\)/
 const MatchOddBackslashes = /(?<!\\)\\(?:\\\\)*(?!\\)/
 
-export default function lexer(input: string): StreamedToken[] {
+export function lexer(input: string): StreamedToken[] {
     let p = 0
     let length = input.length
 
     const tokenBuffer: StreamedToken[] = []
 
-    // Error
-    const panic = (msg: string) => {
-        let text = input.substring(0, p);
-        let line = text.split("\n").length;
+    function panic(msg: string): never {
+        const text = input.substring(0, p);
+        const line = text.split("\n").length;
         let char = p; text.split("\n").forEach(s => char -= s.length);
         console.log(tokenBuffer)
         throw new Error(`file<${line}:${char}>: ${msg}`)
@@ -99,7 +99,7 @@ export default function lexer(input: string): StreamedToken[] {
                     longdata(m[2].length)
                 } else {
                     // Normal, consume until newline or eof
-                    let m1 = match(/.+?(?:\n|$)/)
+                    const m1 = match(/.+?(?:\n|$)/)
                     m1 ? p += m1[0].length : panic("something happened while consuming normal comment")
                 }
             } else if (m = match(/\s+/)) {
@@ -126,7 +126,7 @@ export default function lexer(input: string): StreamedToken[] {
                 }
 
                 // Replace foldable ascii escapes
-                let replaced = input.substr(tokenStart + 1, m[0].length + 1)
+                const replaced = input.substr(tokenStart + 1, m[0].length + 1)
                     .replace(
                         /\\(\d{2,3})/g,
                         (w, n) => n > 31 && n < 127 ? String.fromCharCode(n) : w
@@ -141,7 +141,7 @@ export default function lexer(input: string): StreamedToken[] {
             }
 
             token(TokenType.String)
-        } else if (m = match(/[a-zA-Z_]\w*/)) {
+        } else if (m = match(/[a-zA-Z]\w*/)) {
             p += m[0].length
             token(Keywords.has(m[0]) ? TokenType.Keyword : TokenType.Ident)
         } else if (m = match(/0x[\da-fA-F]+|\d+(?:E|e)-?\d+|\d*\.?\d+/)) {
@@ -162,7 +162,6 @@ export default function lexer(input: string): StreamedToken[] {
             p++
             token(TokenType.Symbol)
         } else {
-            console.log(p, length)
             panic(`Unexpected character \`${input.substring(p)}\``)
         }
     }

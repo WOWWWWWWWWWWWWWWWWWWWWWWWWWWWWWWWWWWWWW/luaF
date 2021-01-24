@@ -1,8 +1,10 @@
 import { assembleWithCommas, Expression } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
-import TableLiteral from "./TableLiteral.ts";
+import { TableLiteral } from "./TableLiteral.ts";
 
-export class ArgCall extends Expression {
+export abstract class Call extends Expression { }
+
+export class ArgCall extends Call {
     base: Expression
     arguments: Expression[]
     method_token?: Token
@@ -35,7 +37,7 @@ export class ArgCall extends Expression {
     }
 }
 
-export class StringCall extends Expression {
+export class StringCall extends Call {
     base: Expression
     arg: Token
     method_token?: Token
@@ -61,7 +63,7 @@ export class StringCall extends Expression {
     }
 }
 
-export class TableCall extends Expression {
+export class TableCall extends Call {
     base: Expression
     table: TableLiteral
     method_token?: Token

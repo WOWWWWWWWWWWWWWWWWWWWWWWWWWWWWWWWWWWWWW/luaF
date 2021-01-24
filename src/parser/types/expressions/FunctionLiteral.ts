@@ -1,7 +1,7 @@
 import { assembleTokensWithCommas, Block, Expression } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class FunctionLiteral extends Expression {
+export class FunctionLiteral extends Expression {
     arglist: Token[]
     body: Block
 

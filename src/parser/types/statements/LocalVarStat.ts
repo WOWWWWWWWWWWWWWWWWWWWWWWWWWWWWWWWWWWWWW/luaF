@@ -1,7 +1,7 @@
 import { assembleTokensWithCommas, assembleWithCommas, Expression, Statement } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-export default class LocalVarStat extends Statement {
+export class LocalVarStat extends Statement {
     lhs: Token[]
     rhs: Expression[]
 
@@ -15,8 +15,11 @@ export default class LocalVarStat extends Statement {
         return [
             new Token(TokenType.Keyword, "local"),
             assembleTokensWithCommas(this.lhs),
-            new Token(TokenType.Symbol, "="),
-            assembleWithCommas(this.rhs)
+            ...this.rhs.length != 0 ?
+                [
+                    new Token(TokenType.Symbol, "="),
+                    assembleWithCommas(this.rhs)
+                ] : []
         ];
     }
 }

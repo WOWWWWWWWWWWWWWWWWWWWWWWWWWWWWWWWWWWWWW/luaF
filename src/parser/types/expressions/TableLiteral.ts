@@ -1,7 +1,7 @@
 import { assembleWithCommas, Expression, TableEntry } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
-class TableIndex extends TableEntry {
+export class TableIndex extends TableEntry {
     index: Expression
     value: Expression
 
@@ -22,7 +22,7 @@ class TableIndex extends TableEntry {
     }
 }
 
-class TableField extends TableEntry {
+export class TableField extends TableEntry {
     field: Token
     value: Expression
 
@@ -41,7 +41,7 @@ class TableField extends TableEntry {
     }
 }
 
-class TableValue extends TableEntry {
+export class TableValue extends TableEntry {
     value: Expression
 
     constructor(value: Expression) {
@@ -54,7 +54,7 @@ class TableValue extends TableEntry {
     }
 }
 
-export default class TableLiteral extends Expression {
+export class TableLiteral extends Expression {
     entryList: TableEntry[]
 
     constructor(entryList: TableEntry[]) {
