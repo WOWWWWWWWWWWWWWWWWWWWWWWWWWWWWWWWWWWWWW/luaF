@@ -117,8 +117,8 @@ export function parse(input: string): Block {
         expect(TokenType.Symbol, "{");
         const entries: TableEntry[] = []
 
-        const t1 = peek()
-        while (t1.source != "}") {
+        let t1;
+        while ((t1 = peek()).source != "}") {
             if (t1.source == "[") {
                 // Index
                 p++ // get();
@@ -471,6 +471,7 @@ export function parse(input: string): Block {
 
     function statement(): [boolean, Statement] {
         const tk = peek()
+        console.log(tk.source)
         switch (tk.source) {
             case "if":
                 return [false, ifstat()]

@@ -94,12 +94,13 @@ export function lexer(input: string): StreamedToken[] {
                 break
             } else if (m = match(/--(\[(=*)\[)?/)) {
                 // Comments, first group possibly matches [[ and [==[, second group matches equals
+                p += m[0].length
                 if (m[1]) { // Long comment if there is a first group
-                    p += m[0].length
                     longdata(m[2].length)
                 } else {
                     // Normal, consume until newline or eof
-                    const m1 = match(/.+?(?:\n|$)/)
+                    const m1 = match(/.*?$/m)
+                    console.log(m1)
                     m1 ? p += m1[0].length : panic("something happened while consuming normal comment")
                 }
             } else if (m = match(/\s+/)) {
@@ -121,7 +122,7 @@ export function lexer(input: string): StreamedToken[] {
             // Get invalid letter escapes
             const content = m[1] || m[2]
             if (content) {
-                for (const invalid of content.matchAll(new RegExp(`${MatchOddBackslashes.source}${/([^\\drnt"'\\\\])/.source}`, "g"))) {
+                for (const invalid of content.matchAll(new RegExp(`${MatchOddBackslashes.source}${/([^\drnt"'\\])/.source}`, "g"))) {
                     panic(`Letter escape \\${invalid[1]} is not allowed.`)
                 }
 
@@ -141,7 +142,7 @@ export function lexer(input: string): StreamedToken[] {
             }
 
             token(TokenType.String)
-        } else if (m = match(/[a-zA-Z]\w*/)) {
+        } else if (m = match(/[a-zA-Z_]\w*/)) {
             p += m[0].length
             token(Keywords.has(m[0]) ? TokenType.Keyword : TokenType.Ident)
         } else if (m = match(/0x[\da-fA-F]+|\d+(?:E|e)-?\d+|\d*\.?\d+/)) {
