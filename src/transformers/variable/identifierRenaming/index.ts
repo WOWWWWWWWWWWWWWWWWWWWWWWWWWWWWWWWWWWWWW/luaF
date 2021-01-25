@@ -1,7 +1,6 @@
 import { Block } from "../../../parser/types/Base.ts";
 import { Scope } from "../../../variableInfo/Scope.ts";
 import { Global, Local, Variable } from "../../../variableInfo/Variable.ts";
-import { getMapping } from "./renamers/index.ts";
 
 import renamers from "./renamers/index.ts"
 import { Options } from "../../../parser/types/Context.ts";
@@ -64,11 +63,7 @@ export default function (root: Block, globals: Global[], rootScope: Scope) {
         let name = varNamesLazy[i]
         if (!name) {
             do {
-                if (opts.increment) {
-                    name = indexToVarName(nextValidNameIndex++)
-                } else {
-                    name = indexToVarName(getMapping(nextValidNameIndex++))
-                }
+                name = opts.prefix + indexToVarName(nextValidNameIndex++, opts.increment)
             } while (globalUsedNames.has(name));
             varNamesLazy[i] = name
         }

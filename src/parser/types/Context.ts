@@ -9,6 +9,7 @@ export class Options {
     identifierRenaming = {
         enabled: false,
         mode: "alphabet",
+        prefix: "",
         renameGlobals: false,
         increment: false
     }

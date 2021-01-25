@@ -29,34 +29,6 @@ const exists = async (filename: string): Promise<boolean> => {
     }
 };
 
-//---
-
-declare global {
-    interface Array<T> {
-        shuffle(): Array<T>;
-    }
-
-    interface String {
-        mock(): string
-    }
-}
-
-Array.prototype.shuffle = function () {
-    for (let i = this.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [this[i], this[j]] = [this[j], this[i]];
-    }
-    return this
-}
-
-// Random upper and lowercase
-String.prototype.mock = function () {
-    return this.split("").map(c => Math.random() < .5 ? c.toLowerCase() : c.toUpperCase()).join("")
-}
-
-//---
-
-
 cli.command('dumpts <input>', 'Dumps the token stream for a file. (DEBUGGING)')
     .option('-o <output>', 'Output file')
     .action(async (input, options) => {

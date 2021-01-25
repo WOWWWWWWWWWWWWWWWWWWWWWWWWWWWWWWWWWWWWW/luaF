@@ -1,19 +1,25 @@
-const AllIdentStartChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-    's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_']
+import { AllIdentStartChars, AllIdentChars } from "../../../../utils/constants.ts";
 
-const AllIdentChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i',
-    'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
-    's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I',
-    'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',
-    'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_',
-    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+let getMapping: (index: number) => number;
+{
+    // Allocate for more than 2000..
+    const range = [...Array(2000).keys()]
 
-export default function indexToVarName(index: number) {
+    const s1 = range.slice(0, 26);
+    s1.shuffle()
+
+    const s2 = range.slice(26);
+    s2.shuffle()
+
+    const mapping = s1.concat(s2)
+
+    getMapping = (index: number) => mapping[index]
+}
+
+
+export default function indexToVarName(index: number, increment: boolean) {
+    if (!increment) index = getMapping(index)
+
     const id = []
 
     {
