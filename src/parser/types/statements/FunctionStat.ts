@@ -1,4 +1,5 @@
 import { assembleTokensWithCommas, Block, Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
 export class FunctionStat extends Statement {
@@ -7,8 +8,8 @@ export class FunctionStat extends Statement {
     arglist: Token[]
     body: Block
 
-    constructor(local: boolean, namechain: Token[], arglist: Token[], body: Block) {
-        super()
+    constructor(options: Options, local: boolean, namechain: Token[], arglist: Token[], body: Block) {
+        super(options)
         this.local = local
         this.namechain = namechain
         this.arglist = arglist

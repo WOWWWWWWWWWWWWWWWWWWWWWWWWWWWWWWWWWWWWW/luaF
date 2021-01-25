@@ -1,4 +1,5 @@
 import { assembleTokensWithCommas, assembleWithCommas, Block, Expression, Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
 export class NumericForStat extends Statement {
@@ -6,8 +7,8 @@ export class NumericForStat extends Statement {
     rangelist: Expression[]
     body: Block
 
-    constructor(varlist: Token[], rangelist: Expression[], body: Block) {
-        super()
+    constructor(options: Options, varlist: Token[], rangelist: Expression[], body: Block) {
+        super(options)
         this.varlist = varlist
         this.rangelist = rangelist
         this.body = body
@@ -31,8 +32,8 @@ export class GenericForStat extends Statement {
     generatorlist: Expression[]
     body: Block
 
-    constructor(varlist: Token[], generatorlist: Expression[], body: Block) {
-        super()
+    constructor(options: Options, varlist: Token[], generatorlist: Expression[], body: Block) {
+        super(options)
         this.varlist = varlist
         this.generatorlist = generatorlist
         this.body = body

@@ -1,12 +1,13 @@
 import { Block, Expression, Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
 export class RepeatStat extends Statement {
     body: Block
     condition: Expression
 
-    constructor(body: Block, condition: Expression) {
-        super()
+    constructor(options: Options, body: Block, condition: Expression) {
+        super(options)
         this.body = body
         this.condition = condition
     }

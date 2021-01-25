@@ -1,11 +1,12 @@
 import { assembleWithCommas, Expression, Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { TokenTree, Token, TokenType } from "../Token.ts";
 
 export class ReturnStat extends Statement {
     list: Expression[]
 
-    constructor(list: Expression[]) {
-        super()
+    constructor(options: Options, list: Expression[]) {
+        super(options)
         this.list = list
     }
 

@@ -1,12 +1,13 @@
 import { Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { TokenTree } from "../Token.ts";
 import { Call } from './../expressions/CallExpr.ts';
 
 export class CallExprStat extends Statement {
     expr: Call
 
-    constructor(expr: Call) {
-        super()
+    constructor(options: Options, expr: Call) {
+        super(options)
         this.expr = expr
     }
 

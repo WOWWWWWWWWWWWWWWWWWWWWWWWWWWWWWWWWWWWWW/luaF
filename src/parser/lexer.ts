@@ -1,53 +1,6 @@
 // deno-lint-ignore-file no-cond-assign
-import { StreamedToken, Token, TokenType } from './types/Token.ts';
-
-// Golfing because I don't like you :-)
-
-/*
-const EscapeForCharacter = {
-    '\r': '\\r', 
-    '\n': '\\n', 
-    '\t': '\\t', 
-    '"': '\\"', 
-    "'": "\\'", 
-    '\\': '\\'
-}
-
-const CharacterForEscape = {
-    'r': '\r', 
-    'n': '\n', 
-    't': '\t',
-    '"': '"', 
-    "'": "'", 
-    '\\': '\\'
-}
-
-
-const AllIdentStartChars = new Set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 
-                                     'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 
-                                     's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                                     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
-                                     'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-                                     'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_'])
-
-const AllIdentChars = new Set(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 
-                                'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 
-                                's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-                                'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 
-                                'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 
-                                'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '_',
-                                '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'])
-*/
-
-const Keywords = new Set(['and', 'break', 'do', 'else', 'elseif',
-    'end', 'false', 'for', 'function', 'goto', 'if',
-    'in', 'local', 'nil', 'not', 'or', 'repeat',
-    'return', 'then', 'true', 'until', 'while'])
-
-const Symbols = new Set(['+', '-', '*', '/', '^', '%', ',', '{', '}', '[', ']', '(', ')', ';', '#', '.', ':'])
-
-const MatchEvenBackslashes = /(?<!\\)(?:\\\\)*(?!\\)/
-const MatchOddBackslashes = /(?<!\\)\\(?:\\\\)*(?!\\)/
+import { MatchEvenBackslashes, MatchOddBackslashes, Keywords, Symbols } from '../utils/constants.ts';
+import { StreamedToken, TokenType } from './types/Token.ts';
 
 export function lexer(input: string): StreamedToken[] {
     let p = 0
@@ -66,24 +19,32 @@ export function lexer(input: string): StreamedToken[] {
     const match = (r: RegExp) => input.substring(p).match(new RegExp(`^(?:${r.source})`, r.flags))
 
     // Consume a long data with equals count of `eqcount'
-    function longdata(eqcount: number) {
-        const m = match(new RegExp(`.+?]={${eqcount}}]`)) // eqcount 1: .+?]={1}] | eqcount 3: .+?]={3}]
-        m ? p += m[0].length : panic("Unfinished long string.")
+    function longdata(eqcount: number): string {
+        const m = match(new RegExp("(.*?)]={" + eqcount + "}]", "s"))
+        if (m) {
+            p += m[0].length
+            return m[1]
+        }
+        panic("Unfinished long string.")
     }
 
     let whiteStart = 0
     let tokenStart = 0
+    let comments: string[] = []
+
     const token = (type: TokenType) =>
         tokenBuffer.push(
             new StreamedToken(
                 type,
                 input.substring(tokenStart, p),
-                input.substring(whiteStart, tokenStart)
+                input.substring(whiteStart, tokenStart),
+                comments
             )
         )
 
     // Main lexer loop
     while (true) {
+        comments = []
         // Mark the whitespace start
         whiteStart = p
 
@@ -95,14 +56,17 @@ export function lexer(input: string): StreamedToken[] {
             } else if (m = match(/--(\[(=*)\[)?/)) {
                 // Comments, first group possibly matches [[ and [==[, second group matches equals
                 p += m[0].length
+                const commentStart = p
+                let commentEnd;
                 if (m[1]) { // Long comment if there is a first group
-                    longdata(m[2].length)
+                    commentEnd = commentStart + longdata(m[2].length).length
                 } else {
                     // Normal, consume until newline or eof
                     const m1 = match(/.*?$/m)
-                    console.log(m1)
                     m1 ? p += m1[0].length : panic("something happened while consuming normal comment")
+                    commentEnd = p
                 }
+                comments.push(input.substring(commentStart, commentEnd))
             } else if (m = match(/\s+/)) {
                 p += m[0].length
             } else {
@@ -128,7 +92,7 @@ export function lexer(input: string): StreamedToken[] {
 
                 // Replace foldable ascii escapes
                 const replaced = input.substr(tokenStart + 1, m[0].length + 1)
-                    .replace(
+                    .replaceAll(
                         /\\(\d{2,3})/g,
                         (w, n) => n > 31 && n < 127 ? String.fromCharCode(n) : w
                     ) // lmao

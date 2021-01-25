@@ -1,4 +1,5 @@
 import { Block, Expression, Statement } from "../Base.ts";
+import { Options } from "../Context.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
 
 export class ElseClause {
@@ -31,8 +32,8 @@ export class IfStat extends Statement {
     body: Block
     elseClauses: ElseClause[]
 
-    constructor(condition: Expression, body: Block, elseClauses: ElseClause[]) {
-        super()
+    constructor(options: Options, condition: Expression, body: Block, elseClauses: ElseClause[]) {
+        super(options)
         this.condition = condition
         this.body = body
         this.elseClauses = elseClauses

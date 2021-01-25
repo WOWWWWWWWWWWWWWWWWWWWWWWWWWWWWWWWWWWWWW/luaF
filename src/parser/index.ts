@@ -1,10 +1,10 @@
 import { lexer } from "./lexer.ts";
-import { Block, Expression, Statement, TableEntry } from "./types/Base.ts";
+import { Block, Expression, Statement } from "./types/Base.ts";
 import { StreamedToken, Token, TokenType } from "./types/Token.ts";
 
 import { ParenExpr } from "./types/expressions/ParenExpr.ts";
 import { VariableExpr } from "./types/expressions/VariableExpr.ts";
-import { TableField, TableIndex, TableLiteral, TableValue } from "./types/expressions/TableLiteral.ts";
+import { TableEntry, TableField, TableIndex, TableLiteral, TableValue } from "./types/expressions/TableLiteral.ts";
 import { FunctionLiteral } from './types/expressions/FunctionLiteral.ts';
 import { FunctionStat } from './types/statements/FunctionStat.ts';
 import { FieldExpr } from './types/expressions/FieldExpr.ts';
@@ -27,6 +27,7 @@ import { RepeatStat } from './types/statements/RepeatStat.ts';
 import { LocalVarStat } from './types/statements/LocalVarStat.ts';
 import { ReturnStat } from './types/statements/ReturnStat.ts';
 import { BreakStat } from './types/statements/BreakStat.ts';
+import { Context } from "./types/Context.ts";
 
 const BinaryPriority: { [key: string]: [number, number] } = {
     "+": [6, 6],
@@ -48,6 +49,7 @@ const BinaryPriority: { [key: string]: [number, number] } = {
 
 export function parse(input: string): Block {
     const tokenStream = lexer(input);
+    const context = new Context();
     let p = 0;
 
     const get = () => tokenStream[p++];
@@ -107,7 +109,7 @@ export function parse(input: string): Block {
             expect(TokenType.Symbol, ")");
             return new ParenExpr(inner)
         } else if (tk.type == TokenType.Ident) {
-            return new VariableExpr(get())
+            return new VariableExpr(get().checkAnnotations(context))
         } else {
             panic("Unexpected symbol")
         }
@@ -160,7 +162,7 @@ export function parse(input: string): Block {
         }
 
         while (peek().source == ",") {
-            varList.push(get())
+            p++ // get();
             if (peek().source == "..." && acceptVarg) {
                 varList.push(get())
                 return varList
@@ -179,7 +181,7 @@ export function parse(input: string): Block {
     }
 
     function funcdecl(local: boolean): FunctionStat {
-        get().context(null) // Function Keyword
+        get().checkAnnotations(context) // Function Keyword
 
         const nameChain: Token[] = []
 
@@ -201,7 +203,7 @@ export function parse(input: string): Block {
 
         const body = blockbody("end")
 
-        return new FunctionStat(local, nameChain, argList, body)
+        return new FunctionStat(context.statement, local, nameChain, argList, body)
     }
 
     function funcliteral(): FunctionLiteral {
@@ -292,9 +294,9 @@ export function parse(input: string): Block {
             default:
                 switch (tk.type) {
                     case TokenType.Number:
-                        return new NumberLiteral(get())
+                        return NumberLiteral.fromToken(get())
                     case TokenType.String:
-                        return new StringLiteral(get())
+                        return StringLiteral.fromToken(get())
                     default:
                         return primaryexpr()
                 }
@@ -338,7 +340,7 @@ export function parse(input: string): Block {
     function exprstat(): CallExprStat | AssignmentStat {
         const ex = primaryexpr()
         if (ex instanceof Call) {
-            return new CallExprStat(ex)
+            return new CallExprStat(context.statement, ex)
         } else {
             const lhs: Expression[] = [ex]
             while (peek().source == ",") {
@@ -355,12 +357,12 @@ export function parse(input: string): Block {
                 p++ // get();
                 rhs.push(expr())
             }
-            return new AssignmentStat(lhs, rhs)
+            return new AssignmentStat(context.statement, lhs, rhs)
         }
     }
 
     function ifstat(): IfStat {
-        get().context(null)
+        get().checkAnnotations(context)
         const condition = expr()
         expect(TokenType.Keyword, "then")
         const body = block()
@@ -376,30 +378,30 @@ export function parse(input: string): Block {
                 expect(TokenType.Keyword, "then")
             }
             const elseBody = block()
-            elseClauses.push(new ElseClause(condition, body))
+            elseClauses.push(new ElseClause(elseCondition, elseBody))
             if (tk.source == "else") {
                 break
             }
         }
         expect(TokenType.Keyword, "end")
-        return new IfStat(condition, body, elseClauses)
+        return new IfStat(context.statement, condition, body, elseClauses)
     }
 
     function dostat(): DoStat {
-        get().context(null)
-        return new DoStat(blockbody("end"))
+        get().checkAnnotations(context)
+        return new DoStat(context.statement, blockbody("end"))
     }
 
     function whilestat(): WhileStat {
-        get().context(null)
+        get().checkAnnotations(context)
         const condition = expr()
         expect(TokenType.Keyword, "do")
         const body = blockbody("end")
-        return new WhileStat(condition, body)
+        return new WhileStat(context.statement, condition, body)
     }
 
     function forstat(): NumericForStat | GenericForStat {
-        get().context(null)
+        get().checkAnnotations(context)
         const loopVars = varlist(false)
 
         const tk = peek()
@@ -411,27 +413,27 @@ export function parse(input: string): Block {
             }
             expect(TokenType.Keyword, "do")
             const body = blockbody("end")
-            return new NumericForStat(loopVars, rangeList, body)
+            return new NumericForStat(context.statement, loopVars, rangeList, body)
         } else if (tk.source == "in") {
             p++ // get();
             const generatorList = exprlist()
             expect(TokenType.Keyword, "do")
             const body = blockbody("end")
-            return new GenericForStat(loopVars, generatorList, body)
+            return new GenericForStat(context.statement, loopVars, generatorList, body)
         } else {
             panic("expected `=` or `in` as part of for loop")
         }
     }
 
     function repeatstat(): RepeatStat {
-        get().context(null)
+        get().checkAnnotations(context)
         const body = blockbody("until")
         const condition = expr()
-        return new RepeatStat(body, condition)
+        return new RepeatStat(context.statement, body, condition)
     }
 
     function localdecl(): FunctionStat | LocalVarStat {
-        get().context(null)
+        get().checkAnnotations(context)
         const tk = peek()
         if (tk.source == "function") {
             const funcStat = funcdecl(true)
@@ -446,14 +448,14 @@ export function parse(input: string): Block {
                 p++ // get();
                 exprList = exprlist()
             }
-            return new LocalVarStat(varList, exprList)
+            return new LocalVarStat(context.statement, varList, exprList)
         } else {
             panic("expected `function` or ident after `local`")
         }
     }
 
     function retstat(): ReturnStat {
-        get().context(null)
+        get().checkAnnotations(context)
         let exprList: Expression[] = []
 
         const tk = peek()
@@ -461,17 +463,16 @@ export function parse(input: string): Block {
             exprList = exprlist()
         }
 
-        return new ReturnStat(exprList)
+        return new ReturnStat(context.statement, exprList)
     }
 
     function breakstat(): BreakStat {
-        get().context(null)
-        return new BreakStat()
+        get().checkAnnotations(context)
+        return new BreakStat(context.statement)
     }
 
     function statement(): [boolean, Statement] {
         const tk = peek()
-        console.log(tk.source)
         switch (tk.source) {
             case "if":
                 return [false, ifstat()]
@@ -497,6 +498,7 @@ export function parse(input: string): Block {
     }
 
     block = () => {
+        const pop = context.pushBlock()
         const statements: Statement[] = []
         let isLast = false
         while (!isLast && !peek().isBlockFollow()) {
@@ -509,7 +511,7 @@ export function parse(input: string): Block {
                 p++ // get();
             }
         }
-        return new Block(statements)
+        return new Block(statements, pop())
     }
 
     return block()

@@ -1,32 +1,40 @@
+import { Options } from "./Context.ts";
 import { Token, TokenTree, TokenType } from "./Token.ts";
 
-abstract class Base {
+export abstract class Node {
     public abstract assemble(): TokenTree[];
 }
 
-export abstract class TableEntry extends Base { }
-export abstract class Expression extends Base { }
-export abstract class Statement extends Base { }
+export abstract class Expression extends Node { }
 
-export function assembleWithCommas(list: Base[]): TokenTree[] {
+export abstract class Statement extends Node {
+    options: Options
+
+    constructor(options: Options) {
+        super()
+        this.options = options
+    }
+}
+
+export function assembleWithCommas(list: Node[]): TokenTree[] {
     const res: TokenTree[] = []
-    list.forEach((b, i) => {
+    for (let i = 0; i < list.length; i++) {
+        const b = list[i];
         res.push(b.assemble())
-        if (i + 1 < list.length) {
-            res.push(new Token(TokenType.Symbol, ","))
-        }
-    })
+        res.push(new Token(TokenType.Symbol, ","))
+    }
+    res.pop()
     return res
 }
 
 export function assembleTokensWithCommas(list: Token[]): Token[] {
     const res: Token[] = []
-    list.forEach((b, i) => {
+    for (let i = 0; i < list.length; i++) {
+        const b = list[i];
         res.push(b)
-        if (i + 1 < list.length) {
-            res.push(new Token(TokenType.Symbol, ","))
-        }
-    })
+        res.push(new Token(TokenType.Symbol, ","))
+    }
+    res.pop()
     return res
 }
 
@@ -43,12 +51,14 @@ function getFirstToken(tree: TokenTree[]): Token {
     return Array.isArray(o) ? getLastToken(o) : o
 }
 
-export class Block extends Base {
+export class Block extends Node {
     stats: Statement[]
+    options: Options
 
-    constructor(stats: Statement[]) {
+    constructor(stats: Statement[], options: Options) {
         super()
         this.stats = stats
+        this.options = options
     }
 
     assemble(): TokenTree[] { // add semicolons to prevent ambiguous syntax
@@ -71,17 +81,3 @@ export class Block extends Base {
         return res;
     }
 }
-
-
-/*
-type ValueOrArray<T> = T | ValueOrArray<T>[];
-export function flatten<T>(arr: ValueOrArray<T>[]): T[] {
-    const res: T[] = []
-    for (const value of arr) {
-        Array.isArray(value) ?
-            res.concat(flatten(value)) :
-            res.push(value)
-    }
-    return res
-}
-*/

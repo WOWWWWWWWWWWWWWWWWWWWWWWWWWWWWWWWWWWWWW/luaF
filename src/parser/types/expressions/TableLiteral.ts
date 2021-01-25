@@ -1,5 +1,7 @@
-import { assembleWithCommas, Expression, TableEntry } from "../Base.ts";
+import { assembleWithCommas, Expression, Node } from "../Base.ts";
 import { Token, TokenTree, TokenType } from "../Token.ts";
+
+export abstract class TableEntry extends Node { }
 
 export class TableIndex extends TableEntry {
     index: Expression

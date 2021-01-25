@@ -1,3 +1,5 @@
+import { Context } from "./Context.ts"
+
 export enum TokenType {
     Eof,
     String,
@@ -38,10 +40,12 @@ export class Token {
 
 export class StreamedToken extends Token {
     leadingWhite: string
+    comments: string[]
 
-    constructor(type: TokenType, source: string, leadingWhite: string) {
+    constructor(type: TokenType, source: string, leadingWhite: string, comments: string[]) {
         super(type, source)
         this.leadingWhite = leadingWhite
+        this.comments = comments
     }
 
     public isBlockFollow(): boolean {
@@ -56,9 +60,28 @@ export class StreamedToken extends Token {
         return UnopSet.has(this.source)
     }
 
-    // TODO: Create annotations
-    // deno-lint-ignore no-explicit-any
-    context(context: any): StreamedToken {
+    checkAnnotations(context: Context): StreamedToken {
+        for (const comment of this.comments) {
+            let matched;
+            for (const match of comment.matchAll(/\s*?(\/{1,3})\s*?luaf\s*\/{0,3}\s+(\w+)\s+(.+)[^/]/gs)) {
+                matched = true
+                const scope = match[1].length
+                const subcmd = match[2]
+                const args = match[3]
+
+                // deno-lint-ignore no-explicit-any
+                const method = context[<any>subcmd];
+                if (method instanceof Function) {
+                    method.call(context, scope, args)
+                } else {
+                    console.warn(`Invalid subcommand \`${subcmd}\` in annotation \`${comment}\`, ignoring`)
+                }
+            }
+
+            if (comment.includes("luaf") && !matched) {
+                console.warn(`Incorrect syntax detected in annotation \`${comment}\`, ignoring`)
+            }
+        }
         return this;
     }
 
