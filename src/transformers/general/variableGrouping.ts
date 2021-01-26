@@ -5,6 +5,8 @@ import { LocalVarStat } from "../../parser/types/statements/LocalVarStat.ts";
 import { Token } from "../../parser/types/Token.ts";
 import { Walker } from './../../parser/types/Walker.ts';
 
+import "../../extensions/Array.d.ts";
+
 export default function (root: Block) {
     const visitor = new Walker()
 

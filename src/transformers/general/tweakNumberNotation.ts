@@ -2,6 +2,8 @@ import { Block } from "../../parser/types/Base.ts";
 import { Token, TokenType } from "../../parser/types/Token.ts";
 import { Walker } from './../../parser/types/Walker.ts';
 
+import "../../extensions/String.ts"
+
 export default function (root: Block) {
     const visitor = new Walker()
 

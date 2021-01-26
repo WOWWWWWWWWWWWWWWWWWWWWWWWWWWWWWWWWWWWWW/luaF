@@ -1,4 +1,5 @@
 import { AllIdentStartChars, AllIdentChars } from "../../../../utils/constants.ts";
+import "../../../../extensions/Array.ts";
 
 let getMapping: (index: number) => number;
 {

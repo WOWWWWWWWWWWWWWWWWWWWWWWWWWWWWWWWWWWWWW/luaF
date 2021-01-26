@@ -1,3 +1,5 @@
+import "../../../../extensions/Array.ts";
+
 let getMapping: (index: number) => number;
 {
     const range = [...Array(500).keys()]

@@ -1,3 +1,5 @@
+import "../../../../extensions/Array.ts";
+
 let getMapping: (index: number) => number;
 {
     // Should not allocate for more than 200
