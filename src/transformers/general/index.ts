@@ -1,13 +1,13 @@
-import { Block } from "../../parser/types/Base.ts";
+import { Block } from "@ast/Base"
 
-import removeDuplicateLiterals from "./removeDuplicateLiterals.ts"
-import tweakNumberNotation from "./tweakNumberNotation.ts"
-import variableGrouping from "./variableGrouping.ts";
-import obnoxiousStringLiterals from "./obnoxiousStringLiterals.ts";
+import removeDuplicateLiterals from "./removeDuplicateLiterals"
+import tweakNumberNotation from "./tweakNumberNotation"
+import variableGrouping from "./variableGrouping"
+import obnoxiousStringLiterals from "./obnoxiousStringLiterals"
 
 export default [
-    removeDuplicateLiterals,
-    variableGrouping,
-    tweakNumberNotation,
-    obnoxiousStringLiterals
+	removeDuplicateLiterals,
+	variableGrouping,
+	tweakNumberNotation,
+	obnoxiousStringLiterals
 ] as ((root: Block) => Block)[]

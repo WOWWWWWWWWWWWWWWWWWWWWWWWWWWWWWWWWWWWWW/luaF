@@ -1,11 +1,13 @@
-import alphabet from './Alphabet.ts'
-import underscore from './Underscore.ts'
-import ugly from './Ugly.ts'
-import hexadecimal from './Hexadecimal.ts'
+import alphabet from "./Alphabet"
+import underscore from "./Underscore"
+import ugly from "./Ugly"
+import hexadecimal from "./Hexadecimal"
 
 export default {
-    "alphabet": alphabet,
-    "underscore": underscore,
-    "ugly": ugly,
-    "hexadecimal": hexadecimal
-} as { [mode: string]: ((index: number, increment: boolean) => string) | undefined }
+	alphabet: alphabet,
+	underscore: underscore,
+	ugly: ugly,
+	hexadecimal: hexadecimal
+} as {
+	[mode: string]: ((index: number, increment: boolean) => string) | undefined
+}

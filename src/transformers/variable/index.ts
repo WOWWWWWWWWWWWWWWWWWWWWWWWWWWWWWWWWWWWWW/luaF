@@ -1,9 +1,11 @@
-import { Block } from "../../parser/types/Base.ts";
-import { Scope } from "../../variableInfo/Scope.ts";
-import { Global } from "../../variableInfo/Variable.ts";
+import { Block } from "@ast/Base"
+import { Scope } from "../../variableInfo/Scope"
+import { Global } from "../../variableInfo/Variable"
 
-import identifierRenaming from "./identifierRenaming/index.ts";
+import identifierRenaming from "./identifierRenaming"
 
-export default [
-    identifierRenaming
-] as ((root: Block, globals: Global[], rootScope: Scope) => Block)[]
+export default [identifierRenaming] as ((
+	root: Block,
+	globals: Global[],
+	rootScope: Scope
+) => Block)[]

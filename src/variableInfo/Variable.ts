@@ -1,73 +1,79 @@
-import { Options } from "../parser/types/Context.ts"
-import { markLocation } from "./index.ts"
-import { Scope } from "./Scope.ts"
+import { Options } from "@utils/Context"
+import { markLocation } from "./index"
+import { Scope } from "./Scope"
 
 export enum LocalType {
-    Local,
-    Argument,
-    LocalFunction,
-    ForRange
+	Local,
+	Argument,
+	LocalFunction,
+	ForRange
 }
 
 export interface VariableInfo {
-    type: LocalType,
-    index?: number
+	type: LocalType
+	index?: number
 }
 
 export type NameFunc = (newName: string) => void
 export abstract class Variable {
-    name: string
+	name: string
 
-    abstract renameList: NameFunc[]
-    assignedTo = false
+	abstract renameList: NameFunc[]
+	assignedTo = false
 
-    beginLocation: number
-    endLocation: number
-    scopeEndLocation = 0
-    abstract referenceLocationList: number[]
+	beginLocation: number
+	endLocation: number
+	scopeEndLocation = 0
+	abstract referenceLocationList: number[]
 
-    options: Options | null
+	options: Options | null
 
-    constructor(name: string, options: Options | null) {
-        this.name = name
-        this.options = options
+	constructor(name: string, options: Options | null) {
+		this.name = name
+		this.options = options
 
-        this.beginLocation = markLocation()
-        this.endLocation = markLocation()
-    }
+		this.beginLocation = markLocation()
+		this.endLocation = markLocation()
+	}
 
-    rename(newName: string) {
-        this.name = newName
-        this.renameList.forEach(f => f(newName))
-    }
+	rename(newName: string): void {
+		this.name = newName
+		this.renameList.forEach((f) => f(newName))
+	}
 
-    reference(nameFunc: NameFunc) {
-        this.renameList.push(nameFunc)
+	reference(nameFunc: NameFunc): void {
+		this.renameList.push(nameFunc)
 
-        this.endLocation = markLocation()
-        this.referenceLocationList.push(this.endLocation)
-    }
+		this.endLocation = markLocation()
+		this.referenceLocationList.push(this.endLocation)
+	}
 }
 
 export class Global extends Variable {
-    referenceLocationList: number[] = []
-    renameList: NameFunc[] = []
+	referenceLocationList: number[] = []
+	renameList: NameFunc[] = []
 }
 
 export class Local extends Variable {
-    referenceLocationList: number[]
-    renameList: NameFunc[]
+	referenceLocationList: number[]
+	renameList: NameFunc[]
 
-    scope: Scope
-    info: VariableInfo
+	scope: Scope
+	info: VariableInfo
 
-    constructor(name: string, options: Options, info: VariableInfo, scope: Scope, nameFunc: NameFunc) {
-        super(name, options)
-        this.renameList = [nameFunc]
+	constructor(
+		name: string,
+		options: Options,
+		info: VariableInfo,
+		scope: Scope,
+		nameFunc: NameFunc
+	) {
+		super(name, options)
+		this.renameList = [nameFunc]
 
-        this.info = info
-        this.scope = scope
+		this.info = info
+		this.scope = scope
 
-        this.referenceLocationList = [markLocation()]
-    }
+		this.referenceLocationList = [markLocation()]
+	}
 }

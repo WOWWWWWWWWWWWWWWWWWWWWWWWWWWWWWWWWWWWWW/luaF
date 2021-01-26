@@ -1,5 +1,8 @@
 out.lua
 dump*.json
-tests
 
 .vscode
+node_modules
+
+dist
+tests

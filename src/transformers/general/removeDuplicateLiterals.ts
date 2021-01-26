@@ -1,74 +1,71 @@
-import { Block, Expression } from "../../parser/types/Base.ts";
-import { Walker } from './../../parser/types/Walker.ts';
-import { VariableExpr } from './../../parser/types/expressions/VariableExpr.ts';
-import { LocalVarStat } from './../../parser/types/statements/LocalVarStat.ts';
-import { Token, TokenType } from "../../parser/types/Token.ts";
-import { Options } from "../../parser/types/Context.ts";
+import { Block, Expression } from "@ast/Base"
+import { Walker } from "@utils/Walker"
+import { VariableExpr } from "@ast/expressions/VariableExpr"
+import { LocalVarStat } from "@ast/statements/LocalVarStat"
+import { Token, TokenType } from "@ast/Token"
+import { Options } from "@utils/Context"
 
-import "../../extensions/Array.ts";
+import "@extensions/Array"
 
-export default function (root: Block) {
-    const visitor = new Walker()
+export default function (root: Block): Block {
+	const visitor = new Walker()
 
-    const alreadyAssigned: { [key: string]: string } = {}
-    const flagged: Set<Expression> = new Set()
+	const alreadyAssigned: { [key: string]: string } = {}
+	const flagged: Set<Expression> = new Set()
 
-    const buffer: LocalVarStat[] = []
+	const buffer: LocalVarStat[] = []
 
-    let i = 0
-    function substitute(expr: Expression, key: string, options: Options): VariableExpr {
-        const wasAssignedAlready = alreadyAssigned[key]
-        const ident = wasAssignedAlready || (alreadyAssigned[key] = "__rdl" + i++)
+	let i = 0
+	function substitute(
+		expr: Expression,
+		key: string,
+		options: Options
+	): VariableExpr {
+		const wasAssignedAlready = alreadyAssigned[key]
+		const ident = wasAssignedAlready || (alreadyAssigned[key] = "__rdl" + i++)
 
-        if (!wasAssignedAlready) {
-            buffer.push(
-                new LocalVarStat(
-                    options,
-                    [new Token(TokenType.Ident, ident)],
-                    [expr]
-                )
-            )
+		if (!wasAssignedAlready) {
+			buffer.push(
+				new LocalVarStat(options, [new Token(TokenType.Ident, ident)], [expr])
+			)
 
-            flagged.add(expr)
-        }
+			flagged.add(expr)
+		}
 
+		return new VariableExpr(new Token(TokenType.Ident, ident))
+	}
 
-        return new VariableExpr(new Token(TokenType.Ident, ident))
-    }
+	visitor.numberLiteral = {
+		leave: (expr, stat) => {
+			if (!flagged.has(expr))
+				return substitute(expr, expr.value.toString(), stat.options)
+		}
+	}
 
+	visitor.stringLiteral = {
+		leave: (expr, stat) => {
+			if (!flagged.has(expr))
+				return substitute(expr, expr.value.toString(), stat.options)
+		}
+	}
 
-    visitor.numberLiteral = {
-        leave: (expr, stat) => {
-            if (!flagged.has(expr))
-                return substitute(expr, expr.value.toString(), stat.options)
-        }
-    }
+	visitor.nilLiteral = {
+		leave: (expr, stat) => {
+			if (!flagged.has(expr)) return substitute(expr, "nil", stat.options)
+		}
+	}
 
-    visitor.stringLiteral = {
-        leave: (expr, stat) => {
-            if (!flagged.has(expr))
-                return substitute(expr, expr.value.toString(), stat.options)
-        }
-    }
+	visitor.booleanLiteral = {
+		leave: (expr, stat) => {
+			if (!flagged.has(expr))
+				return substitute(expr, expr.value.toString(), stat.options)
+		}
+	}
 
-    visitor.nilLiteral = {
-        leave: (expr, stat) => {
-            if (!flagged.has(expr))
-                return substitute(expr, "nil", stat.options)
-        }
-    }
+	visitor.traverse(root)
 
-    visitor.booleanLiteral = {
-        leave: (expr, stat) => {
-            if (!flagged.has(expr))
-                return substitute(expr, expr.value.toString(), stat.options)
-        }
-    }
+	buffer.shuffle()
+	root.stats.unshift(...buffer)
 
-    visitor.traverse(root)
-
-    buffer.shuffle()
-    root.stats.unshift(...buffer)
-
-    return root
+	return root
 }

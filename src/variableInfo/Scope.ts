@@ -1,32 +1,32 @@
-import { markLocation } from "./index.ts"
-import { Local } from "./Variable.ts"
+import { markLocation } from "./index"
+import { Local } from "./Variable"
 
 export class Scope {
-    parentScope: Scope | undefined
-    childScopeList: Scope[] = []
-    variableList: Local[] = []
+	parentScope: Scope | undefined
+	childScopeList: Scope[] = []
+	variableList: Local[] = []
 
-    beginLocation: number
-    endLocation: number | undefined
+	beginLocation: number
+	endLocation: number | undefined
 
-    depth = 1
+	depth = 1
 
-    constructor(parentScope: Scope | undefined) {
-        this.parentScope = parentScope
-        this.beginLocation = markLocation()
+	constructor(parentScope: Scope | undefined) {
+		this.parentScope = parentScope
+		this.beginLocation = markLocation()
 
-        if (this.parentScope) {
-            this.depth = this.parentScope.depth + 1
-            this.parentScope.childScopeList.push(this)
-        }
-    }
+		if (this.parentScope) {
+			this.depth = this.parentScope.depth + 1
+			this.parentScope.childScopeList.push(this)
+		}
+	}
 
-    getVariable(name: string): Local | undefined {
-        const self = [...this.variableList].reverse().find(v => v.name == name)
-        if (self) return self
+	getVariable(name: string): Local | undefined {
+		const self = [...this.variableList].reverse().find((v) => v.name == name)
+		if (self) return self
 
-        if (this.parentScope) {
-            return this.parentScope.getVariable(name)
-        }
-    }
+		if (this.parentScope) {
+			return this.parentScope.getVariable(name)
+		}
+	}
 }
