@@ -75,7 +75,6 @@ export default function (root: Block, globals: Global[], rootScope: Scope) {
 
     for (let j = 0; j < allVariables.length; j++) {
         const v = allVariables[j];
-        console.log(v.name)
 
         // Find the first unused name
         let i = 0
@@ -137,7 +136,6 @@ export default function (root: Block, globals: Global[], rootScope: Scope) {
                 }
             }
         } else {
-            console.log("global")
             /*
                 This is a global var, all other globals can't collide with it, and
                 any local variable with a reference to this global in it's lifetime

@@ -1,33 +1,14 @@
 import { cac } from 'https://unpkg.com/cac/mod.ts';
 import { parse } from "./parser/index.ts";
 import { lexer } from "./parser/lexer.ts";
-import { Block } from "./parser/types/Base.ts";
 import { print } from "./print.ts";
 
 import { createVariableInfo } from "./variableInfo/index.ts";
-import { Scope } from "./variableInfo/Scope.ts";
-import { Global } from "./variableInfo/Variable.ts";
 
 import transformers from "./transformers/general/index.ts";
+import vtransformers from "./transformers/variable/index.ts";
 
 const cli = cac('luaf');
-const __dirname = new URL('.', import.meta.url).pathname.slice(1);
-
-const exists = async (filename: string): Promise<boolean> => {
-    try {
-        await Deno.stat(filename);
-        // successful, file or directory must exist
-        return true;
-    } catch (error) {
-        if (error instanceof Deno.errors.NotFound) {
-            // file or directory does not exist
-            return false;
-        } else {
-            // unexpected error, maybe permissions, pass it along
-            throw error;
-        }
-    }
-};
 
 cli.command('dumpts <input>', 'Dumps the token stream for a file. (DEBUGGING)')
     .option('-o <output>', 'Output file')
@@ -56,23 +37,10 @@ cli.command('build <input>', 'Builds the file with luaF')
 
         // transformers that require variableInfo
         const [globals, rootScope] = createVariableInfo(root)
-        const vtransformerDir = await Deno.readDir(await Deno.realPath(__dirname + "/transformers/variable"));
-        for await (const vtransformer of vtransformerDir) {
-            let path;
-            if (vtransformer.isFile && vtransformer.name.endsWith('.ts')) {
-                path = await Deno.realPath(__dirname + "/transformers/variable/" + vtransformer.name);
-                console.log(`Doing variable transformer ${vtransformer.name.slice(0, -3)}`)
-            } else if (vtransformer.isDirectory) {
-                path = await Deno.realPath(__dirname + "/transformers/variable/" + vtransformer.name + "/index.ts");
-                console.log(`Doing variable transformer ${vtransformer.name}`)
-            }
 
-            if (path && await exists(path)) {
-                const transform: (root: Block, globals: Global[], rootScope: Scope) => Block = (await import("file://" + path)).default;
-                root = transform(root, globals, rootScope)
-            } else {
-                throw Error("Transformer does not exist.")
-            }
+        // Variable transformers
+        for (const transform of vtransformers) {
+            root = transform(root, globals, rootScope)
         }
 
         await Deno.writeTextFile(options.o || "out.lua", print(root));
