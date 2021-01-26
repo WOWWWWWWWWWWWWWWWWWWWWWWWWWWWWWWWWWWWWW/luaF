@@ -84,7 +84,6 @@ export class Context {
             console.warn(`Was only able to parse ${check.length} commands in this annotation:\n${cmd}`)
         }
         for (const effects of check) {
-            console.log(effects)
             const options = effects[2] && JSON.parse(effects[2])
             let props;
             if (effects[1] == "*") {
