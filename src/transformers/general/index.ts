@@ -7,12 +7,14 @@ import variableGrouping from "./variableGrouping"
 import encodeStrings from "./encodeStrings"
 import splitStrings from "./splitStrings"
 import nilDeadEnd from "./nilDeadEnd"
+import charToTernary from "./charToTernary"
 
 export default [
 	dotToBracketNotation,
 	stringToArgCall,
 
 	splitStrings,
+	charToTernary,
 
 	removeDuplicateLiterals,
 	variableGrouping,

@@ -1,4 +1,5 @@
 import { random } from "@utils/random"
+import "@extensions/String"
 
 // dynamic mapping since the possibilities are so large
 const getMapping = (() => {

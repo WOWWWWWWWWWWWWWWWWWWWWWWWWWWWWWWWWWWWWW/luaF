@@ -51,6 +51,12 @@ export class Options {
 	nilDeadEnd = {
 		enabled: false
 	}
+
+	charToTernary = {
+		enabled: false,
+		freq: 0.5,
+		cycleProbability: 0.2
+	}
 }
 
 // get defaults as array

@@ -20,5 +20,5 @@ export default function indexToVarName(
 	increment: boolean
 ): string {
 	if (!increment) index = getMapping(index)
-	return index.toString(2).replaceAll(/0/g, "l").replaceAll(/1/g, "I")
+	return index.toString(2).replace(/0/g, "l").replace(/1/g, "I")
 }

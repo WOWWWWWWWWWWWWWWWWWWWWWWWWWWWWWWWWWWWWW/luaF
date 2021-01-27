@@ -4,7 +4,7 @@ import { StringLiteral } from "@ast/expressions/StringLiteral"
 import { VariableExpr } from "@ast/expressions/VariableExpr"
 import { LocalVarStat } from "@ast/statements/LocalVarStat"
 import { Token, TokenType } from "@ast/Token"
-import { random } from "@utils/random"
+import { chance, random } from "@utils/random"
 import { Walker } from "@utils/Walker"
 
 // https://stackoverflow.com/questions/22752781/javascript-split-array-into-groups-with-random-number-of-objects
@@ -29,7 +29,7 @@ export default function (root: Block): Block {
 	visitor.stringLiteral = {
 		leave: (expr, stat, block) => {
 			const opts = stat.options.splitStrings
-			if (opts.enabled && expr.value.length > opts.min) {
+			if (opts.enabled && expr.value.length > opts.min && chance(opts.freq)) {
 				// for when we want to insert an assignment
 				let statementIndex = block.stats.indexOf(stat)
 
