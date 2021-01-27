@@ -43,6 +43,7 @@ export const Symbols = new Set([
 	":"
 ])
 
+export const LookbehindEvenBackslashes = /(?<=(?<!\\)(?:\\\\)*)/
 export const MatchEvenBackslashes = /(?<!\\)(?:\\\\)*(?!\\)/
 export const MatchOddBackslashes = /(?<!\\)\\(?:\\\\)*(?!\\)/
 
@@ -167,3 +168,21 @@ export const AllIdentChars = [
 	"8",
 	"9"
 ]
+
+export const CharacterForEscape = {
+	r: "\r",
+	n: "\n",
+	t: "\t",
+	'"': '"',
+	"'": "'",
+	"\\": "\\"
+} as { [key: string]: string | undefined }
+
+export const EscapeForCharacter = {
+	"\r": "\\r",
+	"\n": "\\n",
+	"\t": "\\t",
+	'"': '\\"',
+	"'": "\\'",
+	"\\": "\\\\"
+} as { [key: string]: string | undefined }

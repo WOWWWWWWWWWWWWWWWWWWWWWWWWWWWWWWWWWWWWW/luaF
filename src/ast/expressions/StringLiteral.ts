@@ -1,5 +1,10 @@
 import { Expression } from "@ast/Base"
 import { Token, TokenTree, TokenType } from "@ast/Token"
+import {
+	CharacterForEscape,
+	EscapeForCharacter,
+	LookbehindEvenBackslashes
+} from "@utils/constants"
 
 export class StringLiteral extends Expression {
 	value: string
@@ -18,17 +23,44 @@ export class StringLiteral extends Expression {
 				`Invalid string \`${token.source}\` in StringLiteral.fromToken`
 			)
 
-		// Closing quote is always the same length as opening quote
-		return new StringLiteral(
-			token.source.slice(openingQuote.length, -openingQuote.length),
-			openingQuote
-		)
+		// Replace foldable ascii escapes
+		const src = token.source
+			// Closing quote is always the same length as opening quote
+			.slice(openingQuote.length, -openingQuote.length)
+			.replace(
+				new RegExp(
+					`${LookbehindEvenBackslashes.source}${/\\(\d{1,3})/.source}`,
+					"g"
+				),
+				(_, n: string) =>
+					//n > 31 && n < 127 ?
+					String.fromCharCode(parseInt(n)) // : w
+			)
+			.replace(
+				new RegExp(
+					`${LookbehindEvenBackslashes.source}${/\\([rnt"'\\])/.source}`,
+					"g"
+				),
+				(_, n: string) => CharacterForEscape[n] || _
+			)
+
+		return new StringLiteral(src, openingQuote)
+	}
+
+	formatValue(): string {
+		return (
+			this.value
+				.replace(/[\r\n\t\\]/g, (c) => EscapeForCharacter[c] || c) // Other escapes
+				// eslint-disable-next-line no-control-regex
+				.replace(/[\0-\x1F\x7F-\xFF]/g, (c) => `\\${c.charCodeAt(0)}`) // Change ascii escapes back
+				.replace(new RegExp(this.openingQuote, "g"), `\\${this.openingQuote}`)
+		) // Escape quote
 	}
 
 	toToken(): Token {
 		return new Token(
 			TokenType.String,
-			this.openingQuote + this.value + this.getClosingQuote()
+			this.openingQuote + this.formatValue() + this.getClosingQuote()
 		)
 	}
 

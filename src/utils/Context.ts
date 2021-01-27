@@ -28,10 +28,16 @@ export class Options {
 		enabled: false
 	}
 
-	obnoxiousStringLiterals = {
-		enabled: false,
-		min: 50,
-		max: 100
+	dotToBracketNotation = {
+		enabled: false
+	}
+
+	stringToArgCall = {
+		enabled: false
+	}
+
+	encodeStrings = {
+		enabled: false
 	}
 }
 
@@ -75,6 +81,7 @@ export class Context {
 	}
 
 	enable(scope: number, cmd: string): void {
+		console.log(cmd)
 		const scopes = this.getScopes(scope)
 
 		// Syntax: identifierRenaming, numberToHex
@@ -98,6 +105,7 @@ export class Context {
 
 			for (const scope of scopes) {
 				for (const prop of props) {
+					console.log(prop, options)
 					scope[prop] = {
 						...scope[prop],
 						...(options || {}),

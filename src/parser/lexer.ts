@@ -8,7 +8,7 @@ import { StreamedToken, TokenType } from "@ast/Token"
 
 export function lexer(input: string): StreamedToken[] {
 	let p = 0
-	let length = input.length
+	const length = input.length
 
 	const tokenBuffer: StreamedToken[] = []
 
@@ -114,25 +114,9 @@ export function lexer(input: string): StreamedToken[] {
 				)) {
 					panic(`Letter escape \\${invalid[1]} is not allowed.`)
 				}
-
-				// Replace foldable ascii escapes
-				const replaced = input
-					.substr(tokenStart + 1, m[0].length + 1)
-					.replace(/\\(\d{2,3})/g, (w, n) =>
-						n > 31 && n < 127 ? String.fromCharCode(n) : w
-					) // lmao
-				input =
-					input.substring(0, tokenStart + 1) +
-					replaced +
-					input.substring(tokenStart + m[0].length + 2)
-				// p -= length - input.length
-				length = input.length
-
-				p += replaced.length - 1
-			} else {
-				p += m[0].length
 			}
 
+			p += m[0].length
 			token(TokenType.String)
 		} else if ((m = match(/[a-zA-Z_]\w*/))) {
 			p += m[0].length

@@ -86,7 +86,7 @@ export class StreamedToken extends Token {
 		for (const comment of this.comments) {
 			let matched
 			for (const match of comment.matchAll(
-				/\s*?(\/{1,3})\s*?luaf\s*\/{0,3}\s+(\w+)\s+(.+)[^/]/gs
+				/\s*?(\/{1,3})\s*?luaf\s*\/{0,3}\s+(\w+)\s+([^/]+)/g
 			)) {
 				matched = true
 				const scope = match[1].length

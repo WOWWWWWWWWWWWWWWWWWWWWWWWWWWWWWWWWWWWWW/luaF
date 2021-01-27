@@ -16,8 +16,12 @@ export default function (root: Block): Block {
 		stat: LocalVarStat,
 		block: Block
 	): AssignmentStat | void {
+		if (!stat.options.variableGrouping.enabled) return
 		const buffer = buffers.get(block)
-		if (!buffer) throw new Error("unreachable")
+		if (!buffer)
+			throw new Error(
+				"Cannot enable variableGrouping for a specific statement. Use blocks instead."
+			)
 
 		stat.lhs.forEach((t) => buffer.push(new Token(t.type, t.source)))
 
