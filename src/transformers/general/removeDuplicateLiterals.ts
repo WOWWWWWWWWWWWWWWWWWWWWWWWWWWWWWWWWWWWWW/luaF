@@ -37,27 +37,28 @@ export default function (root: Block): Block {
 
 	visitor.numberLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr))
+			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}
 
 	visitor.stringLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr))
+			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}
 
 	visitor.nilLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr)) return substitute(expr, "nil", stat.options)
+			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
+				return substitute(expr, "nil", stat.options)
 		}
 	}
 
 	visitor.booleanLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr))
+			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}

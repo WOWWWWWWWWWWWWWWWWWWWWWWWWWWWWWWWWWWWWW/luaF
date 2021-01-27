@@ -1,4 +1,4 @@
-import "@extensions/String"
+import { random } from "@utils/random"
 
 // dynamic mapping since the possibilities are so large
 const getMapping = (() => {
@@ -13,7 +13,7 @@ const getMapping = (() => {
 
 		let newMapping: number
 		do {
-			newMapping = Math.floor(Math.random() * max)
+			newMapping = random(0, max)
 		} while (mappingSet.has(newMapping))
 
 		indexToMapping[index] = newMapping

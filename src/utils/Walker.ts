@@ -31,6 +31,8 @@ import {
 	TableValue
 } from "@ast/expressions/TableLiteral"
 
+type IdentifiedStatement = Statement & { id?: number }
+
 type VisitorFunction<T extends Node, A> = (
 	node: T,
 	...a: // https://stackoverflow.com/questions/52318011/optional-parameters-based-on-conditional-types
@@ -117,25 +119,46 @@ export class Walker {
 		return root
 	}
 
+	identifier = 0
 	private _block(block: Block) {
 		const [benter, bleave] = this.visit(this.block, (b) => (block = b))
 
 		benter(block)
-		for (let i = 0; i < block.stats.length; i++) {
+
+		let i = 0
+		while (block.stats.length - i > 0) {
+			let newStatement = block.stats[i]
+
+			// statements may be added, so we assign an identifier so we know where this statement's new index is
+			const oldStatement: IdentifiedStatement = block.stats[i]
+			oldStatement.id = ++this.identifier
+
 			const [senter, sleave] = this.visit(
 				this.statement,
-				(s) => (block.stats[i] = s)
+				(s) => (newStatement = s)
 			)
 
-			senter(block.stats[i], block)
+			senter(newStatement, block)
 
-			const out = this._statement(block.stats[i], block)
+			const out = this._statement(newStatement, block)
 			if (out !== undefined) {
-				block.stats[i] = out
+				newStatement = out
 			}
 
-			sleave(block.stats[i], block)
+			sleave(newStatement, block)
+
+			// Visitor may have inserted new statements, so we find the identifier
+			const newIndex = block.stats.findIndex(
+				(idStat: IdentifiedStatement) => idStat.id == this.identifier
+			)
+
+			// Delete the identifier
+			delete oldStatement.id
+
+			block.stats[newIndex] = newStatement // replace the statement
+			i = newIndex + 1 // advance i to after the newIndex
 		}
+
 		bleave(block)
 
 		return block

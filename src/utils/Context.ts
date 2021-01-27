@@ -39,6 +39,18 @@ export class Options {
 	encodeStrings = {
 		enabled: false
 	}
+
+	splitStrings = {
+		enabled: false,
+		freq: 0.5,
+
+		min: 2, // minimum chunk size
+		max: 3 // maximum chunk size
+	}
+
+	nilDeadEnd = {
+		enabled: false
+	}
 }
 
 // get defaults as array

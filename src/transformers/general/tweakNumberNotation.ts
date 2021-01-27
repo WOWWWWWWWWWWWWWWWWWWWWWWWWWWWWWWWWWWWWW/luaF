@@ -2,8 +2,6 @@ import { Block } from "@ast/Base"
 import { Token, TokenType } from "@ast/Token"
 import { Walker } from "@utils/Walker"
 
-import "@extensions/String"
-
 export default function (root: Block): Block {
 	const visitor = new Walker()
 
