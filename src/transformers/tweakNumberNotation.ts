@@ -3,6 +3,8 @@ import { Token, TokenType } from "@ast/Token"
 import { Walker } from "@utils/Walker"
 
 export default function (root: Block): Block {
+	console.log("doing tweakNumberNotation transformer")
+
 	const visitor = new Walker()
 
 	visitor.numberLiteral = {

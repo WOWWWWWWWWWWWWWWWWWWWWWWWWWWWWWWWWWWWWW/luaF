@@ -23,6 +23,8 @@ function randChunkSplit(str: string, min: number, max: number): string[] {
 }
 
 export default function (root: Block): Block {
+	console.log("doing splitStrings transformer")
+
 	const visitor = new Walker()
 	let i = 0
 

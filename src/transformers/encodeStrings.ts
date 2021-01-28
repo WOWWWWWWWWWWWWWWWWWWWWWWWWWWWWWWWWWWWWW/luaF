@@ -2,6 +2,8 @@ import { Block } from "@ast/Base"
 import { Walker } from "@utils/Walker"
 
 export default function (root: Block): Block {
+	console.log("doing encodeStrings transformer")
+
 	const visitor = new Walker()
 
 	visitor.stringLiteral = {

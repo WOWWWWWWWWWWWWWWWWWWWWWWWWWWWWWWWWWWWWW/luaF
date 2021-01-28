@@ -8,8 +8,16 @@ import encodeStrings from "./encodeStrings"
 import splitStrings from "./splitStrings"
 import nilDeadEnd from "./nilDeadEnd"
 import charToTernary from "./charToTernary"
+import identifierRenaming from "./identifierRenaming"
+import globalToEnv from "./globalToEnv"
+import functionToAssignment from "./functionToAssignment"
+import expandInvoke from "./expandInvoke"
 
 export default [
+	globalToEnv,
+	functionToAssignment,
+	expandInvoke,
+
 	dotToBracketNotation,
 	stringToArgCall,
 
@@ -21,5 +29,7 @@ export default [
 
 	tweakNumberNotation,
 	encodeStrings,
-	nilDeadEnd
+	nilDeadEnd,
+
+	identifierRenaming
 ] as ((root: Block) => Block)[]

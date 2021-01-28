@@ -89,6 +89,7 @@ export function createVariableInfo(
 			const v: Variable =
 				currentScope.getVariable(name) || getGlobalVar(name, null)
 			v.reference((name) => (expr.value.source = name))
+			expr.variable = v
 		}
 	}
 

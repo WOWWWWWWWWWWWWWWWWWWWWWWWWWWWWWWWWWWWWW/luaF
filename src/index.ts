@@ -5,10 +5,7 @@ import { parse } from "@parser"
 import { lexer } from "@parser/lexer"
 import { print } from "./print"
 
-import { createVariableInfo } from "@variableInfo"
-
-import transformers from "@transformers/general"
-import vtransformers from "@transformers/variable"
+import transformers from "@transformers"
 
 const cli = cac("luaf")
 
@@ -44,18 +41,9 @@ cli
 		let root = parse(text)
 
 		// Normal transformers
-		console.log("Doing general transforms.")
+		console.log("Doing transforms.")
 		for (const transform of transformers) {
 			root = transform(root)
-		}
-
-		// transformers that require variableInfo
-		const [globals, rootScope] = createVariableInfo(root)
-
-		// Variable transformers
-		console.log("Doing variable transforms.")
-		for (const transform of vtransformers) {
-			root = transform(root, globals, rootScope)
 		}
 
 		console.log("Done.")

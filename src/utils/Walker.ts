@@ -131,7 +131,9 @@ export class Walker {
 
 			// statements may be added, so we assign an identifier so we know where this statement's new index is
 			const oldStatement: IdentifiedStatement = block.stats[i]
-			oldStatement.id = ++this.identifier
+
+			const id = ++this.identifier
+			oldStatement.id = id
 
 			const [senter, sleave] = this.visit(
 				this.statement,
@@ -149,8 +151,11 @@ export class Walker {
 
 			// Visitor may have inserted new statements, so we find the identifier
 			const newIndex = block.stats.findIndex(
-				(idStat: IdentifiedStatement) => idStat.id == this.identifier
+				(idStat: IdentifiedStatement) => idStat.id == id
 			)
+
+			if (newIndex == -1)
+				throw new Error(`Could not find statement with identifier ${id}`)
 
 			// Delete the identifier
 			delete oldStatement.id

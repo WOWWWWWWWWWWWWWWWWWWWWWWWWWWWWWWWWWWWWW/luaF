@@ -1,21 +1,20 @@
 import { Block } from "@ast/Base"
-import { Scope } from "../../../variableInfo/Scope"
-import { Global, Local, Variable } from "../../../variableInfo/Variable"
+import { Scope } from "@variableInfo/Scope"
+import { Global, Local, Variable } from "@variableInfo/Variable"
 
 import renamers from "./renamers/index"
 import { Options } from "@utils/Context"
+import { createVariableInfo } from "@variableInfo"
 
-export default function (
-	root: Block,
-	globals: Global[],
-	rootScope: Scope
-): Block {
+export default function (root: Block): Block {
 	/*
         Variable names and other names that are fixed, that we cannot use
         Either these are Lua keywords, or globals that are not assigned to,
         that is environmental globals that are assigned elsewhere beyond our
         control.
     */
+
+	const [globals, rootScope] = createVariableInfo(root)
 
 	const globalUsedNames = new Set([
 		"and",
@@ -69,7 +68,7 @@ export default function (
 			allVariables.push(v as Local & UsedNames)
 		}
 
-		scope.childScopeList.forEach((s) => addFrom(s))
+		scope.childScopeList.forEach((s: Scope) => addFrom(s))
 	}
 	addFrom(rootScope)
 

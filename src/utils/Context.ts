@@ -57,6 +57,18 @@ export class Options {
 		freq: 0.5,
 		cycleProbability: 0.2
 	}
+
+	globalToEnv = {
+		enabled: false
+	}
+
+	functionToAssignment = {
+		enabled: true
+	}
+
+	expandInvoke = {
+		enabled: true
+	}
 }
 
 // get defaults as array

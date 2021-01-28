@@ -8,6 +8,8 @@ import { Walker } from "@utils/Walker"
 import "@extensions/Array"
 
 export default function (root: Block): Block {
+	console.log("doing variableGrouping transformer")
+
 	const visitor = new Walker()
 
 	const buffers: Map<Block, Token[]> = new Map()

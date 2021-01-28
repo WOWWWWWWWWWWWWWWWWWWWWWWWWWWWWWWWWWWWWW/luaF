@@ -8,10 +8,11 @@ import { Options } from "@utils/Context"
 import "@extensions/Array"
 
 export default function (root: Block): Block {
+	console.log("doing removeDuplicateLiterals transformer")
+
 	const visitor = new Walker()
 
 	const alreadyAssigned: { [key: string]: string } = {}
-	const flagged: Set<Expression> = new Set()
 
 	const buffer: LocalVarStat[] = []
 
@@ -28,8 +29,6 @@ export default function (root: Block): Block {
 			buffer.push(
 				new LocalVarStat(options, [new Token(TokenType.Ident, ident)], [expr])
 			)
-
-			flagged.add(expr)
 		}
 
 		return new VariableExpr(new Token(TokenType.Ident, ident))
@@ -37,28 +36,28 @@ export default function (root: Block): Block {
 
 	visitor.numberLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
+			if (stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}
 
 	visitor.stringLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
+			if (stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}
 
 	visitor.nilLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
+			if (stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, "nil", stat.options)
 		}
 	}
 
 	visitor.booleanLiteral = {
 		leave: (expr, stat) => {
-			if (!flagged.has(expr) && stat.options.removeDuplicateLiterals.enabled)
+			if (stat.options.removeDuplicateLiterals.enabled)
 				return substitute(expr, expr.value.toString(), stat.options)
 		}
 	}

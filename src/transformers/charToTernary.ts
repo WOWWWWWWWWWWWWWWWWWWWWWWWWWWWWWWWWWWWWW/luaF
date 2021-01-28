@@ -101,6 +101,8 @@ function createTernary(
 }
 
 export default function (root: Block): Block {
+	console.log("doing charToTernary transformer")
+
 	const visitor = new Walker()
 
 	visitor.stringLiteral = {
