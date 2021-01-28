@@ -6,7 +6,10 @@ export enum LocalType {
 	Local,
 	Argument,
 	LocalFunction,
-	ForRange
+	ForRange,
+
+	// These cannot be changed, this includes the `self` variable name.
+	Subliminal
 }
 
 export interface VariableInfo {
@@ -75,5 +78,13 @@ export class Local extends Variable {
 		this.scope = scope
 
 		this.referenceLocationList = [markLocation()]
+	}
+
+	reference(nameFunc: NameFunc): void {
+		if (this.info.type == LocalType.Subliminal)
+			// subliminal self cannot be renamed
+			return
+
+		super.reference(nameFunc)
 	}
 }

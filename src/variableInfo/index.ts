@@ -88,6 +88,7 @@ export function createVariableInfo(
 			const name = expr.value.source
 			const v: Variable =
 				currentScope.getVariable(name) || getGlobalVar(name, null)
+
 			v.reference((name) => (expr.value.source = name))
 			expr.variable = v
 		}
@@ -154,6 +155,7 @@ export function createVariableInfo(
                 variable `foo` in scope, it will assign to the local variable instead
                 of a global one! I did not know this when writing it initially.
             */
+
 			if (stat.local) {
 				currentScope.variableList.push(
 					new Local(
@@ -175,6 +177,26 @@ export function createVariableInfo(
 			}
 
 			pushScope()
+
+			// check if subliminal self is fit for declaration
+			if (
+				stat.namechain.find((t) => t.source == ":") &&
+				!stat.arglist.find((arg) => arg.source == "self")
+			) {
+				currentScope.variableList.push(
+					new Local(
+						"self",
+						stat.options,
+						{
+							type: LocalType.Subliminal
+						},
+						currentScope,
+						// eslint-disable-next-line @typescript-eslint/no-empty-function
+						() => {}
+					)
+				)
+			}
+
 			stat.arglist.forEach((ident, index) => {
 				if (ident.type == TokenType.Ident)
 					currentScope.variableList.push(

@@ -169,7 +169,7 @@ export class Walker {
 		return block
 	}
 
-	private _statement(statement: Statement, block: Block): Statement {
+	_statement(statement: Statement, block: Block): Statement {
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
 		let visitor: Visitor<any, Statement> | undefined
 
@@ -228,7 +228,7 @@ export class Walker {
 		return statement
 	}
 
-	private _expression(
+	_expression(
 		expression: Expression,
 		statement: Statement,
 		block: Block

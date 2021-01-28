@@ -1,6 +1,7 @@
 import { Block } from "@ast/Base"
 import { IndexExpr } from "@ast/expressions/IndexExpr"
 import { StringLiteral } from "@ast/expressions/StringLiteral"
+import { TableField, TableIndex } from "@ast/expressions/TableLiteral"
 import { Walker } from "@utils/Walker"
 
 export default function (root: Block): Block {
@@ -11,8 +12,26 @@ export default function (root: Block): Block {
 	visitor.fieldExpr = {
 		leave: (expr, stat) => {
 			if (stat.options.dotToBracketNotation.enabled) {
-				expr.field.source = `"${expr.field.source}"`
-				return new IndexExpr(expr.base, StringLiteral.fromToken(expr.field))
+				return new IndexExpr(
+					expr.base,
+					new StringLiteral(expr.field.source, '"')
+				)
+			}
+		}
+	}
+
+	visitor.tableLiteral = {
+		leave: (expr, stat) => {
+			if (stat.options.dotToBracketNotation.enabled) {
+				expr.entryList = expr.entryList.map((e) => {
+					if (e instanceof TableField) {
+						return new TableIndex(
+							new StringLiteral(e.field.source, '"'),
+							e.value
+						)
+					}
+					return e
+				})
 			}
 		}
 	}

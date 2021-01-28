@@ -63,11 +63,15 @@ export class Options {
 	}
 
 	functionToAssignment = {
-		enabled: true
+		enabled: false
 	}
 
 	expandInvoke = {
-		enabled: true
+		enabled: false
+	}
+
+	addParenthesis = {
+		enabled: false
 	}
 }
 
@@ -78,6 +82,16 @@ enum Scope {
 	Global = 1,
 	Block,
 	Statement
+}
+
+function parseSubcommand(cmd: string): string[][] {
+	const check = [...cmd.matchAll(/\s*(\w+|\*)\s*({.+})?\s*(?:,|$)/gy)]
+	if (cmd.split(",").length < check.length) {
+		console.warn(
+			`Was only able to parse ${check.length} commands in this annotation:\n${cmd}`
+		)
+	}
+	return check
 }
 
 export class Context {
@@ -111,18 +125,9 @@ export class Context {
 	}
 
 	enable(scope: number, cmd: string): void {
-		console.log(cmd)
 		const scopes = this.getScopes(scope)
 
-		// Syntax: identifierRenaming, numberToHex
-		// Option Syntax: identifierRenaming {mode: "underscore"}, numberToHex
-		const check = [...cmd.matchAll(/\s*(\w+|\*)\s*({.+})?\s*(?:,|$)/gy)]
-		if (cmd.split(",").length < check.length) {
-			console.warn(
-				`Was only able to parse ${check.length} commands in this annotation:\n${cmd}`
-			)
-		}
-		for (const effects of check) {
+		for (const effects of parseSubcommand(cmd)) {
 			const options = effects[2] && JSON.parse(effects[2])
 			let props
 			if (effects[1] == "*") {
@@ -140,6 +145,64 @@ export class Context {
 						...scope[prop],
 						...(options || {}),
 						...{ enabled: true }
+					}
+				}
+			}
+		}
+	}
+
+	set(scope: number, cmd: string): void {
+		const scopes = this.getScopes(scope)
+
+		for (const effects of parseSubcommand(cmd)) {
+			const options = effects[2] && JSON.parse(effects[2])
+			if (!options)
+				throw new Error(
+					`No options provided for \`${effects[1]}\` in set subcommand`
+				)
+
+			let props
+			if (effects[1] == "*") {
+				props = Settings
+			} else if (Settings.includes(effects[1])) {
+				props = [effects[1]]
+			} else {
+				throw Error(`Obfuscation setting \`${effects[1]}\` does not exist.`)
+			}
+
+			for (const scope of scopes) {
+				for (const prop of props) {
+					console.log(prop, options)
+					scope[prop] = {
+						...scope[prop],
+						...(options || {})
+					}
+				}
+			}
+		}
+	}
+
+	disable(scope: number, cmd: string): void {
+		const scopes = this.getScopes(scope)
+
+		for (const effects of parseSubcommand(cmd)) {
+			const options = effects[2] && JSON.parse(effects[2])
+			let props
+			if (effects[1] == "*") {
+				props = Settings
+			} else if (Settings.includes(effects[1])) {
+				props = [effects[1]]
+			} else {
+				throw Error(`Obfuscation setting \`${effects[1]}\` does not exist.`)
+			}
+
+			for (const scope of scopes) {
+				for (const prop of props) {
+					console.log(prop, options)
+					scope[prop] = {
+						...scope[prop],
+						...(options || {}),
+						...{ enabled: false }
 					}
 				}
 			}

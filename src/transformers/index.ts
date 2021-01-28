@@ -12,24 +12,27 @@ import identifierRenaming from "./identifierRenaming"
 import globalToEnv from "./globalToEnv"
 import functionToAssignment from "./functionToAssignment"
 import expandInvoke from "./expandInvoke"
+import addParenthesis from "./addParenthesis"
 
 export default [
-	globalToEnv,
 	functionToAssignment,
 	expandInvoke,
+	globalToEnv,
 
 	dotToBracketNotation,
 	stringToArgCall,
 
 	splitStrings,
-	charToTernary,
 
 	removeDuplicateLiterals,
 	variableGrouping,
+
+	charToTernary,
 
 	tweakNumberNotation,
 	encodeStrings,
 	nilDeadEnd,
 
+	addParenthesis,
 	identifierRenaming
 ] as ((root: Block) => Block)[]
