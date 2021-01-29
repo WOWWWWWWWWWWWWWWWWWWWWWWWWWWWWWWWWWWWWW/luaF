@@ -19,8 +19,6 @@ export interface VariableInfo {
 
 export type NameFunc = (newName: string) => void
 export abstract class Variable {
-	name: string
-
 	abstract renameList: NameFunc[]
 	assignedTo = false
 
@@ -29,12 +27,7 @@ export abstract class Variable {
 	scopeEndLocation = 0
 	abstract referenceLocationList: number[]
 
-	options: Options | null
-
-	constructor(name: string, options: Options | null) {
-		this.name = name
-		this.options = options
-
+	constructor(public name: string, public options: Options | null) {
 		this.beginLocation = markLocation()
 		this.endLocation = markLocation()
 	}
@@ -61,22 +54,16 @@ export class Local extends Variable {
 	referenceLocationList: number[]
 	renameList: NameFunc[]
 
-	scope: Scope
-	info: VariableInfo
-
 	constructor(
 		name: string,
 		options: Options,
-		info: VariableInfo,
-		scope: Scope,
+		public info: VariableInfo,
+		public scope: Scope,
 		nameFunc: NameFunc
 	) {
 		super(name, options)
+
 		this.renameList = [nameFunc]
-
-		this.info = info
-		this.scope = scope
-
 		this.referenceLocationList = [markLocation()]
 	}
 

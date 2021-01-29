@@ -3,13 +3,12 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class RepeatStat extends Statement {
-	body: Block
-	condition: Expression
-
-	constructor(options: Options, body: Block, condition: Expression) {
+	constructor(
+		options: Options,
+		public body: Block,
+		public condition: Expression
+	) {
 		super(options)
-		this.body = body
-		this.condition = condition
 	}
 
 	assemble(): TokenTree[] {

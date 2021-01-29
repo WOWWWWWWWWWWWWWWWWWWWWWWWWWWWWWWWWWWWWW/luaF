@@ -3,11 +3,8 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class DoStat extends Statement {
-	body: Block
-
-	constructor(options: Options, body: Block) {
+	constructor(options: Options, public body: Block) {
 		super(options)
-		this.body = body
 	}
 
 	assemble(): TokenTree[] {

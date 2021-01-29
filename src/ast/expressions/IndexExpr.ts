@@ -2,13 +2,8 @@ import { Expression } from "@ast/Base"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class IndexExpr extends Expression {
-	base: Expression
-	index: Expression
-
-	constructor(base: Expression, index: Expression) {
+	constructor(public base: Expression, public index: Expression) {
 		super()
-		this.base = base
-		this.index = index
 	}
 
 	assemble(): TokenTree[] {

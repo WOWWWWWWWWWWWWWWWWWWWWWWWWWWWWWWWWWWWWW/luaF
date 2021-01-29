@@ -8,13 +8,8 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class LocalVarStat extends Statement {
-	lhs: Token[]
-	rhs: Expression[]
-
-	constructor(options: Options, lhs: Token[], rhs: Expression[]) {
+	constructor(options: Options, public lhs: Token[], public rhs: Expression[]) {
 		super(options)
-		this.lhs = lhs
-		this.rhs = rhs
 	}
 
 	assemble(): TokenTree[] {

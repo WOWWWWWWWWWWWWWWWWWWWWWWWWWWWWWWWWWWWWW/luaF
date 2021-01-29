@@ -3,13 +3,7 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class ElseClause {
-	condition?: Expression
-	body: Block
-
-	constructor(condition: Expression | undefined, body: Block) {
-		this.condition = condition
-		this.body = body
-	}
+	constructor(public condition: Expression | undefined, public body: Block) {}
 
 	assemble(): TokenTree[] {
 		return [
@@ -26,20 +20,13 @@ export class ElseClause {
 }
 
 export class IfStat extends Statement {
-	condition: Expression
-	body: Block
-	elseClauses: ElseClause[]
-
 	constructor(
 		options: Options,
-		condition: Expression,
-		body: Block,
-		elseClauses: ElseClause[]
+		public condition: Expression,
+		public body: Block,
+		public elseClauses: ElseClause[]
 	) {
 		super(options)
-		this.condition = condition
-		this.body = body
-		this.elseClauses = elseClauses
 	}
 
 	assemble(): TokenTree[] {

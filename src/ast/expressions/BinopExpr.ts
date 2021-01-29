@@ -2,15 +2,12 @@ import { Expression } from "@ast/Base"
 import { Token, TokenTree } from "@ast/Token"
 
 export class BinopExpr extends Expression {
-	lhs: Expression
-	op: Token
-	rhs: Expression
-
-	constructor(lhs: Expression, op: Token, rhs: Expression) {
+	constructor(
+		public lhs: Expression,
+		public op: Token,
+		public rhs: Expression
+	) {
 		super()
-		this.lhs = lhs
-		this.op = op
-		this.rhs = rhs
 	}
 
 	assemble(): TokenTree[] {

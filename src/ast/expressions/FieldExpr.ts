@@ -2,13 +2,8 @@ import { Expression } from "@ast/Base"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class FieldExpr extends Expression {
-	base: Expression
-	field: Token
-
-	constructor(base: Expression, field: Token) {
+	constructor(public base: Expression, public field: Token) {
 		super()
-		this.base = base
-		this.field = field
 	}
 
 	assemble(): TokenTree[] {

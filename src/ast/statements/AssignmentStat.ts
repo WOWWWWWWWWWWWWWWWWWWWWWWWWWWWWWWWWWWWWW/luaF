@@ -3,13 +3,12 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class AssignmentStat extends Statement {
-	lhs: Expression[]
-	rhs: Expression[]
-
-	constructor(options: Options, lhs: Expression[], rhs: Expression[]) {
+	constructor(
+		options: Options,
+		public lhs: Expression[],
+		public rhs: Expression[]
+	) {
 		super(options)
-		this.lhs = lhs
-		this.rhs = rhs
 	}
 
 	assemble(): TokenTree[] {

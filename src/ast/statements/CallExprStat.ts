@@ -4,11 +4,8 @@ import { TokenTree } from "@ast/Token"
 import { Call } from "@ast/expressions/CallExpr"
 
 export class CallExprStat extends Statement {
-	expr: Call
-
-	constructor(options: Options, expr: Call) {
+	constructor(options: Options, public expr: Call) {
 		super(options)
-		this.expr = expr
 	}
 
 	assemble(): TokenTree[] {

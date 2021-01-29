@@ -47,7 +47,7 @@ export default function (root: Block): Block {
 		leave: (expr, stat) => {
 			if (stat.options.addParenthesis.enabled) {
 				expr.base = enclose(expr.base)
-				expr.arguments = expr.arguments.map((e) => enclose(e))
+				expr.args = expr.args.map((e) => enclose(e))
 			}
 		}
 	}

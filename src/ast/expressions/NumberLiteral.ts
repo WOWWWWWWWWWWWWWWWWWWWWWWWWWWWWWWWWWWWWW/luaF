@@ -2,11 +2,8 @@ import { Expression } from "@ast/Base"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class NumberLiteral extends Expression {
-	value: number
-
-	constructor(value: number) {
+	constructor(public value: number) {
 		super()
-		this.value = value
 	}
 
 	static fromToken(token: Token): NumberLiteral {

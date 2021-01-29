@@ -2,11 +2,8 @@ import { Expression } from "@ast/Base"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class BooleanLiteral extends Expression {
-	value: boolean
-
-	constructor(value: boolean) {
+	constructor(public value: boolean) {
 		super()
-		this.value = value
 	}
 
 	assemble(): TokenTree[] {

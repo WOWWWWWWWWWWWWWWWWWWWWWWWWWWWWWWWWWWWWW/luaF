@@ -50,15 +50,11 @@ function createCondition(out: boolean): BinopExpr {
 }
 
 class Ternary {
-	condition: Expression
-	lhs: Expression
-	rhs: Expression
-
-	constructor(condition: Expression, lhs: Expression, rhs: Expression) {
-		this.condition = condition
-		this.lhs = lhs
-		this.rhs = rhs
-	}
+	constructor(
+		public condition: Expression,
+		public lhs: Expression,
+		public rhs: Expression
+	) {}
 
 	unwrap(): BinopExpr {
 		return new BinopExpr(

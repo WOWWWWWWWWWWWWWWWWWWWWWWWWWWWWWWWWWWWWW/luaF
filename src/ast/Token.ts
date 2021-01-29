@@ -35,13 +35,7 @@ const BinopSet = new Set([
 
 const rev = Object.keys(TokenType)
 export class Token {
-	type: TokenType
-	source: string
-
-	constructor(type: TokenType, source: string) {
-		this.type = type
-		this.source = source
-	}
+	constructor(public type: TokenType, public source: string) {}
 
 	public toString(): string {
 		return `<${this.readableType()} \`${this.source}\`>`
@@ -53,18 +47,13 @@ export class Token {
 }
 
 export class StreamedToken extends Token {
-	leadingWhite: string
-	comments: string[]
-
 	constructor(
 		type: TokenType,
 		source: string,
-		leadingWhite: string,
-		comments: string[]
+		public leadingWhite: string,
+		public comments: string[]
 	) {
 		super(type, source)
-		this.leadingWhite = leadingWhite
-		this.comments = comments
 	}
 
 	public isBlockFollow(): boolean {

@@ -8,11 +8,8 @@ export abstract class Node {
 export abstract class Expression extends Node {}
 
 export abstract class Statement extends Node {
-	options: Options
-
-	constructor(options: Options) {
+	constructor(public options: Options) {
 		super()
-		this.options = options
 	}
 }
 
@@ -52,13 +49,8 @@ function getFirstToken(tree: TokenTree[]): Token {
 }
 
 export class Block extends Node {
-	stats: Statement[]
-	options: Options
-
-	constructor(stats: Statement[], options: Options) {
+	constructor(public stats: Statement[], public options: Options) {
 		super()
-		this.stats = stats
-		this.options = options
 	}
 
 	assemble(): TokenTree[] {

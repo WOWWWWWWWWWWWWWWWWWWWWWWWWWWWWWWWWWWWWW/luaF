@@ -4,13 +4,8 @@ import { Token, TokenTree, TokenType } from "@ast/Token"
 export abstract class TableEntry extends Node {}
 
 export class TableIndex extends TableEntry {
-	index: Expression
-	value: Expression
-
-	constructor(index: Expression, value: Expression) {
+	constructor(public index: Expression, public value: Expression) {
 		super()
-		this.index = index
-		this.value = value
 	}
 
 	assemble(): TokenTree[] {
@@ -25,13 +20,8 @@ export class TableIndex extends TableEntry {
 }
 
 export class TableField extends TableEntry {
-	field: Token
-	value: Expression
-
-	constructor(field: Token, value: Expression) {
+	constructor(public field: Token, public value: Expression) {
 		super()
-		this.field = field
-		this.value = value
 	}
 
 	assemble(): TokenTree[] {
@@ -40,11 +30,8 @@ export class TableField extends TableEntry {
 }
 
 export class TableValue extends TableEntry {
-	value: Expression
-
-	constructor(value: Expression) {
+	constructor(public value: Expression) {
 		super()
-		this.value = value
 	}
 
 	assemble(): TokenTree[] {
@@ -53,11 +40,8 @@ export class TableValue extends TableEntry {
 }
 
 export class TableLiteral extends Expression {
-	entryList: TableEntry[]
-
-	constructor(entryList: TableEntry[]) {
+	constructor(public entryList: TableEntry[]) {
 		super()
-		this.entryList = entryList
 	}
 
 	assemble(): TokenTree[] {

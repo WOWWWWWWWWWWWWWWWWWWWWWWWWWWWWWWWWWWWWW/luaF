@@ -7,13 +7,8 @@ import {
 } from "@utils/constants"
 
 export class StringLiteral extends Expression {
-	value: string
-	openingQuote: string
-
-	constructor(value: string, openingQuote: string) {
+	constructor(public value: string, public openingQuote: string) {
 		super()
-		this.value = value
-		this.openingQuote = openingQuote
 	}
 
 	static fromToken(token: Token): StringLiteral {

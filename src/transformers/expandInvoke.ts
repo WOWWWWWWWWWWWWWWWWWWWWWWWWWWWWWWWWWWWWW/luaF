@@ -14,7 +14,7 @@ export default function (root: Block): Block {
 			const opt = stat.options.expandInvoke
 
 			if (expr.method_token && opt.enabled) {
-				expr.arguments.unshift(expr.base)
+				expr.args.unshift(expr.base)
 				expr.base = new FieldExpr(expr.base, expr.method_token)
 				delete expr.method_token
 			}

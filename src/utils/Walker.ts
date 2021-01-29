@@ -417,7 +417,7 @@ export class Walker {
 
 	private _argCall(expression: ArgCall, statement: Statement, block: Block) {
 		expression.base = this._expression(expression.base, statement, block)
-		expression.arguments = expression.arguments.map((e) =>
+		expression.args = expression.args.map((e) =>
 			this._expression(e, statement, block)
 		)
 	}

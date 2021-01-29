@@ -3,13 +3,12 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class WhileStat extends Statement {
-	condition: Expression
-	body: Block
-
-	constructor(options: Options, condition: Expression, body: Block) {
+	constructor(
+		options: Options,
+		public condition: Expression,
+		public body: Block
+	) {
 		super(options)
-		this.condition = condition
-		this.body = body
 	}
 
 	assemble(): TokenTree[] {

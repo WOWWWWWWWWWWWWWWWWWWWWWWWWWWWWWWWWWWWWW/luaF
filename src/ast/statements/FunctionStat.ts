@@ -3,23 +3,14 @@ import { Options } from "@utils/Context"
 import { Token, TokenTree, TokenType } from "@ast/Token"
 
 export class FunctionStat extends Statement {
-	local: boolean
-	namechain: Token[]
-	arglist: Token[]
-	body: Block
-
 	constructor(
 		options: Options,
-		local: boolean,
-		namechain: Token[],
-		arglist: Token[],
-		body: Block
+		public local: boolean,
+		public namechain: Token[],
+		public arglist: Token[],
+		public body: Block
 	) {
 		super(options)
-		this.local = local
-		this.namechain = namechain
-		this.arglist = arglist
-		this.body = body
 	}
 
 	assemble(): TokenTree[] {
