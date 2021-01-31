@@ -35,13 +35,7 @@ export function assembleTokensWithCommas(list: Token[]): Token[] {
 	return res
 }
 
-const AmbiguousLast = new Set([")", "]"])
 const AmbiguousFirst = new Set(["(", "[", "'", '"', "{"])
-
-function getLastToken(tree: TokenTree[]): Token {
-	const o = tree[tree.length - 1]
-	return Array.isArray(o) ? getLastToken(o) : o
-}
 
 function getFirstToken(tree: TokenTree[]): Token {
 	const o = tree[0]
@@ -61,10 +55,9 @@ export class Block extends Node {
 		for (const cur of this.stats) {
 			const tree = cur.assemble()
 			if (prev) {
-				const lastChar = getLastToken(prev).source.slice(-1)
 				const firstChar = getFirstToken(tree).source.charAt(0)
 
-				if (AmbiguousLast.has(lastChar) && AmbiguousFirst.has(firstChar)) {
+				if (AmbiguousFirst.has(firstChar)) {
 					res.push(new Token(TokenType.Symbol, ";"))
 				}
 			}

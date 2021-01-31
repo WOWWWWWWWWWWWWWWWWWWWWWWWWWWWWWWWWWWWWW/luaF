@@ -120,7 +120,7 @@ export function createVariableInfo(
               `local bar = bar + 1`
             Is valid code
         */
-		leave: (stat) => {
+		enter: (stat) => {
 			stat.lhs.forEach((ident, index) => {
 				currentScope.variableList.push(
 					new Local(
@@ -155,7 +155,6 @@ export function createVariableInfo(
                 variable `foo` in scope, it will assign to the local variable instead
                 of a global one! I did not know this when writing it initially.
             */
-
 			if (stat.local) {
 				currentScope.variableList.push(
 					new Local(
@@ -291,7 +290,7 @@ export function createVariableInfo(
 	}
 
 	visitor.assignmentStat = {
-		leave: (stat) => {
+		enter: (stat) => {
 			// For an assignment statement we need to mark the
 			// "assigned to" flag on variables.
 			stat.lhs.forEach((expr) => {

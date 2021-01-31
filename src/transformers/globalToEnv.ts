@@ -13,7 +13,6 @@ export default function (root: Block): Block {
 
 	console.log("creating variable info as per globalToEnv")
 	createVariableInfo(root)
-	console.log("hello")
 
 	const envToken = new Token(TokenType.Ident, "_luaf_env")
 	let used = false // check if any variable has been transformed

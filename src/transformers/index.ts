@@ -22,11 +22,10 @@ export default [
 	dotToBracketNotation,
 	stringToArgCall,
 
-	splitStrings,
-
 	removeDuplicateLiterals,
 	variableGrouping,
 
+	splitStrings,
 	charToTernary,
 
 	tweakNumberNotation,

@@ -30,8 +30,7 @@ import {
 	TableLiteral,
 	TableValue
 } from "@ast/expressions/TableLiteral"
-
-type IdentifiedStatement = Statement & { id?: number }
+import identifyStatementIndex from "./identifyStatementIndex"
 
 type VisitorFunction<T extends Node, A> = (
 	node: T,
@@ -127,13 +126,9 @@ export class Walker {
 
 		let i = 0
 		while (block.stats.length - i > 0) {
+			// statements may be added in the block
+			const oldStatement = block.stats[i]
 			let newStatement = block.stats[i]
-
-			// statements may be added, so we assign an identifier so we know where this statement's new index is
-			const oldStatement: IdentifiedStatement = block.stats[i]
-
-			const id = ++this.identifier
-			oldStatement.id = id
 
 			const [senter, sleave] = this.visit(
 				this.statement,
@@ -150,15 +145,9 @@ export class Walker {
 			sleave(newStatement, block)
 
 			// Visitor may have inserted new statements, so we find the identifier
-			const newIndex = block.stats.findIndex(
-				(idStat: IdentifiedStatement) => idStat.id == id
-			)
+			const newIndex = identifyStatementIndex(oldStatement, block)
 
-			if (newIndex == -1)
-				throw new Error(`Could not find statement with identifier ${id}`)
-
-			// Delete the identifier
-			delete oldStatement.id
+			if (newIndex == -1) throw new Error("Could not find statement")
 
 			block.stats[newIndex] = newStatement // replace the statement
 			i = newIndex + 1 // advance i to after the newIndex
