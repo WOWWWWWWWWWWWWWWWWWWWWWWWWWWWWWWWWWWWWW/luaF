@@ -20,9 +20,11 @@ export class Options {
 		exponent: true
 	}
 
-	removeDuplicateLiterals = {
-		enabled: false
-	}
+	/*
+        removeDuplicateLiterals = {
+            enabled: false
+        }
+    */
 
 	variableGrouping = {
 		enabled: false

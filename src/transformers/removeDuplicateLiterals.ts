@@ -1,3 +1,4 @@
+/*
 import { Block, Expression } from "@ast/Base"
 import { Walker } from "@utils/Walker"
 import { VariableExpr } from "@ast/expressions/VariableExpr"
@@ -69,3 +70,4 @@ export default function (root: Block): Block {
 
 	return root
 }
+*/

@@ -1,7 +1,7 @@
 import { Block } from "@ast/Base"
 import dotToBracketNotation from "./dotToBracketNotation"
 import stringToArgCall from "./stringToArgCall"
-import removeDuplicateLiterals from "./removeDuplicateLiterals"
+// import removeDuplicateLiterals from "./removeDuplicateLiterals"
 import tweakNumberNotation from "./tweakNumberNotation"
 import variableGrouping from "./variableGrouping"
 import encodeStrings from "./encodeStrings"
@@ -22,7 +22,7 @@ export default [
 	dotToBracketNotation,
 	stringToArgCall,
 
-	removeDuplicateLiterals,
+	// removeDuplicateLiterals, scrapped because of lua's 200 local var and 120 upval limit
 	variableGrouping,
 
 	splitStrings,
